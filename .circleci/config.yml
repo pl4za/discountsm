@@ -37,11 +37,11 @@ jobs:
           -c "CREATE TABLE test (name char(25));"
       - run: |
           psql \
-          -d $TEST_DATABASE_URL \
+          -d postgresql://postgres@localhost/circle_test \
           -c "INSERT INTO test VALUES ('John'), ('Joanna'), ('Jennifer');"
       - run: |
           psql \
-          -d $TEST_DATABASE_URL \
+          -d postgresql://postgres@localhost/circle_test \
           -c "SELECT * from test"
       # Use mvn clean and package as the standard maven build phase
       - run:
