@@ -13,6 +13,7 @@ jobs:
       - image: circleci/postgres:13.3-ram
         environment:
           POSTGRES_HOST_AUTH_METHOD: trust
+      - image: cimg/openjdk:16.0
     steps:
       # Checkout the code as the first step.
       - checkout
