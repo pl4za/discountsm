@@ -25,15 +25,15 @@ jobs:
       - run: whoami
       - run: |
           psql \
-          -d circle_test \
+          -d $TEST_DATABASE_URL \
           -c "CREATE TABLE test (name char(25));"
       - run: |
           psql \
-          -d circle_test \
+          -d $TEST_DATABASE_URL \
           -c "INSERT INTO test VALUES ('John'), ('Joanna'), ('Jennifer');"
       - run: |
           psql \
-          -d circle_test \
+          -d $TEST_DATABASE_URL \
           -c "SELECT * from test"
       # Use mvn clean and package as the standard maven build phase
       - run:
