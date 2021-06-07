@@ -3,17 +3,20 @@
 version: 2.1
 
 jobs:
-  build:
-    # Primary container image where all commands run
+  # Below is the definition of your job to build and test your app, you can rename and customize it as you want.
+  build-and-test:
+    # These next lines define a Docker executor: https://circleci.com/docs/2.0/executor-types/
+    # You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+    # Be sure to update the Docker image tag below to openjdk version of your application.
+    # A list of available CircleCI Docker Convenience Images are available here: https://circleci.com/developer/images/image/cimg/openjdk
     docker:
+      - image: cimg/openjdk:16.0
       - image: circleci/python:3.6.2-stretch-browsers
         environment:
           TEST_DATABASE_URL: postgresql://root@localhost/circle_test
-
-      # Service container image
       - image: circleci/postgres:13.3-ram
-
     steps:
+      # Checkout the code as the first step.
       - checkout
       - run: sudo apt-get update
       - run: sudo apt-get install postgresql-client-13
@@ -30,18 +33,6 @@ jobs:
           psql \
           -d $TEST_DATABASE_URL \
           -c "SELECT * from test"
-
-  # Below is the definition of your job to build and test your app, you can rename and customize it as you want.
-  build-and-test:
-    # These next lines define a Docker executor: https://circleci.com/docs/2.0/executor-types/
-    # You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # Be sure to update the Docker image tag below to openjdk version of your application.
-    # A list of available CircleCI Docker Convenience Images are available here: https://circleci.com/developer/images/image/cimg/openjdk
-    docker:
-      - image: cimg/openjdk:16.0
-    steps:
-      # Checkout the code as the first step.
-      - checkout
       # Use mvn clean and package as the standard maven build phase
       - run:
           name: Build
