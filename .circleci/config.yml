@@ -20,6 +20,9 @@ jobs:
     steps:
       # Checkout the code as the first step.
       - checkout
+      - run: sudo apt-get update
+      - run: sudo apt-get install postgresql-client
+      - run: whoami
       - run:
           name: install dockerize
           command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
@@ -28,12 +31,9 @@ jobs:
       - run:
           name: Wait for db
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
-      - run: sudo apt-get update
-      - run: sudo apt-get install postgresql-client
-      - run: whoami
       - run: |
           psql \
-          -d $TEST_DATABASE_URL \
+          -d postgresql://root@localhost/circle_test \
           -c "CREATE TABLE test (name char(25));"
       - run: |
           psql \
