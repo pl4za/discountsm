@@ -22,7 +22,7 @@ class DealsControllerTest {
 
   @Test
   public void itCanGetAllDeals() {
-    ResponseEntity<DealEntity[]> deals = this.testRestTemplate.getForEntity("http://localhost:" + this.port + "/deals", DealEntity[].class);
+    ResponseEntity<Deal[]> deals = this.testRestTemplate.getForEntity("http://localhost:" + this.port + "/deals", Deal[].class);
 
     then(deals.getStatusCode()).isEqualTo(HttpStatus.OK);
     then(deals.getBody()).extracting("title", "description")
