@@ -7,7 +7,6 @@ import static org.joda.money.CurrencyUnit.GBP;
 import com.mysaving.discountsm.common.UUIDEntity;
 import org.joda.money.Money;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,8 +48,8 @@ class DealsControllerTest {
             Money.of(GBP, 16.99),
             Money.of(GBP, 20.99),
             0,
-            new DateTime(2014, 12, 20, 2, 30, DateTimeZone.forID("Europe/London")),
-            new DateTime(2014, 12, 20, 2, 30, DateTimeZone.forID("Europe/London")).plusDays(5)
+            new DateTime(2014, 12, 20, 2, 30),
+            new DateTime(2014, 12, 20, 2, 30).plusDays(5)
         ));
   }
 

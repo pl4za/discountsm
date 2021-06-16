@@ -8,7 +8,6 @@ import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import org.joda.money.Money;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +26,8 @@ public class DataFillerService {
         Money.of(GBP, 16.99),
         Money.of(GBP, 20.99),
         0,
-        new DateTime(2014, 12, 20, 2, 30, DateTimeZone.forID("Europe/London")),
-        new DateTime(2014, 12, 20, 2, 30, DateTimeZone.forID("Europe/London")).plusDays(5)
+        new DateTime(2014, 12, 20, 2, 30),
+        new DateTime(2014, 12, 20, 2, 30).plusDays(5)
     );
 
     dealRepository.save(dealEntity);
