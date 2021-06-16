@@ -38,6 +38,8 @@ public class DealEntity extends UUIDEntity {
 
   @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
   private DateTime expiry;
+
+  private String image;
 }
 
 

@@ -4,6 +4,7 @@ import static org.joda.money.CurrencyUnit.GBP;
 
 import com.mysaving.discountsm.deal.DealEntity;
 import com.mysaving.discountsm.deal.DealRepository;
+import java.io.IOException;
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import org.joda.money.Money;
@@ -19,15 +20,16 @@ public class DataFillerService {
 
   @PostConstruct
   @Transactional
-  public void fillData() {
+  public void fillData() throws IOException {
     DealEntity dealEntity = new DealEntity(
         "Untitled Goose Game for Nintendo Switch (Argos price match) +£3.99 non Prime",
         "Amazon have price matched Argos' price for this Nintendo Switch game. If you were after it from Argos and couldn't find stock before it sold out, this will hopefully be luckier for you! £3.99 shipping if you're not a Prime customer.",
         Money.of(GBP, 16.99),
         Money.of(GBP, 20.99),
-        0,
+        321,
         new DateTime(2014, 12, 20, 2, 30),
-        new DateTime(2014, 12, 20, 2, 30).plusDays(5)
+        new DateTime(2014, 12, 20, 2, 30).plusDays(5),
+        "https://images.hotukdeals.com/threads/content/64CKj/3745735.jpg"
     );
 
     dealRepository.save(dealEntity);
