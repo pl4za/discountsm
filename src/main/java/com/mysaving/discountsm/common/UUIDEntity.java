@@ -1,4 +1,4 @@
-package com.mysaving.discountsm.deal;
+package com.mysaving.discountsm.common;
 
 import java.util.UUID;
 import javax.persistence.Id;
@@ -14,5 +14,9 @@ public class UUIDEntity {
 
   public UUIDEntity() {
     this.id = UUID.randomUUID();
+  }
+
+  public UUID getId() {
+    return id;
   }
 }

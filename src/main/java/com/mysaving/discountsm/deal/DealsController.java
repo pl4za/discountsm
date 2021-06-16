@@ -14,7 +14,7 @@ public class DealsController {
 
   @GetMapping("deals")
   @ResponseBody
-  public List<Deal> getAllDeals() {
+  public List<DealEntity> getAllDeals() {
     return dealRepository.findAll();
   }
 }
