@@ -5,6 +5,7 @@ import static org.joda.money.CurrencyUnit.GBP;
 import com.mysaving.discountsm.deal.DealEntity;
 import com.mysaving.discountsm.deal.DealRepository;
 import java.io.IOException;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import org.joda.money.Money;
@@ -27,11 +28,24 @@ public class DataFillerService {
         Money.of(GBP, 16.99),
         Money.of(GBP, 20.99),
         321,
-        new DateTime(2014, 12, 20, 2, 30),
-        new DateTime(2014, 12, 20, 2, 30).plusDays(5),
+        new DateTime(2021, 8, 16, 2, 30),
+        new DateTime(2021, 8, 16, 2, 30).plusDays(5),
         "https://images.hotukdeals.com/threads/content/64CKj/3745735.jpg"
     );
 
-    dealRepository.save(dealEntity);
+    DealEntity dealEntity2 = new DealEntity(
+        "Adidas Originals ZX700 Trainers + free lettering + free delivery £32.72 vwith code @ Adidas Shop",
+        "Get a unique code hereAdidas Originals ZX700 +free lettering+free delivery £32.72 with code\n"
+            + "Red only\n"
+            + "All sizes available.",
+        Money.of(GBP, 10.99),
+        Money.of(GBP, 19.99),
+        16,
+        new DateTime(2021, 6, 16, 2, 30),
+        new DateTime(2021, 5, 20, 2, 30).plusHours(1),
+        "https://images.hotukdeals.com/thread_additional_info/content/QiT4e/44711.jpg"
+    );
+
+    dealRepository.saveAll(List.of(dealEntity, dealEntity2));
   }
 }
