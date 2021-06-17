@@ -31,13 +31,19 @@ public class DealEntity extends UUIDEntity {
       parameters = {@org.hibernate.annotations.Parameter(name = "currencyCode", value = "GBP")})
   private Money oldPrice;
 
-  private int score;
+  private int upVotes;
+
+  private int downVotes;
 
   @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
   private DateTime posted;
 
   @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
   private DateTime expiry;
+
+  private String link;
+
+  private String image;
 }
 
 
