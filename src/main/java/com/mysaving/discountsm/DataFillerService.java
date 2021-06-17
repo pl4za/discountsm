@@ -28,8 +28,10 @@ public class DataFillerService {
         Money.of(GBP, 16.99),
         Money.of(GBP, 20.99),
         321,
+        34,
         new DateTime(2021, 8, 16, 2, 30),
         new DateTime(2021, 8, 16, 2, 30).plusDays(5),
+        "https://www.currys.co.uk/gbuk/gaming/console-gaming/consoles/nintendo-game-watch-super-mario-bros-10218185-pdt.html",
         "https://images.hotukdeals.com/threads/content/64CKj/3745735.jpg"
     );
 
@@ -41,8 +43,10 @@ public class DataFillerService {
         Money.of(GBP, 10.99),
         Money.of(GBP, 19.99),
         16,
+        5,
         new DateTime(2021, 6, 16, 2, 30),
         new DateTime(2021, 5, 20, 2, 30).plusHours(1),
+        "https://www.currys.co.uk/gbuk/gaming/console-gaming/consoles/nintendo-game-watch-super-mario-bros-10218185-pdt.html",
         "https://images.hotukdeals.com/thread_additional_info/content/QiT4e/44711.jpg"
     );
 

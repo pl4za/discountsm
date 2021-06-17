@@ -39,9 +39,11 @@ class DealsControllerTest {
         DealEntity::getDescription,
         DealEntity::getNewPrice,
         DealEntity::getOldPrice,
-        DealEntity::getScore,
+        DealEntity::getUpVotes,
+        DealEntity::getDownVotes,
         DealEntity::getPosted,
         DealEntity::getExpiry,
+        DealEntity::getLink,
         DealEntity::getImage
     ).contains(
         tuple(
@@ -50,8 +52,10 @@ class DealsControllerTest {
             Money.of(GBP, 16.99),
             Money.of(GBP, 20.99),
             321,
+            34,
             new DateTime(2021, 8, 16, 2, 30),
             new DateTime(2021, 8, 16, 2, 30).plusDays(5),
+            "https://www.currys.co.uk/gbuk/gaming/console-gaming/consoles/nintendo-game-watch-super-mario-bros-10218185-pdt.html",
             "https://images.hotukdeals.com/threads/content/64CKj/3745735.jpg"
         ));
   }

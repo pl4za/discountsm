@@ -16,7 +16,8 @@ public class DealsController {
   @CrossOrigin(origins = "http://localhost:3000")
   @GetMapping("deals")
   @ResponseBody
-  public List<DealEntity> getAllDeals() {
+  public List<DealEntity> getAllDeals() throws InterruptedException {
+    Thread.sleep(2000);
     return dealRepository.findAll();
   }
 }
