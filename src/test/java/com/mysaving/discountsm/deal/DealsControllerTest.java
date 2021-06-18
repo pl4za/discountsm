@@ -3,54 +3,32 @@ package com.mysaving.discountsm.deal;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.joda.money.CurrencyUnit.GBP;
 
+import com.mysaving.discountsm.support.EntityTestSupport;
+import com.mysaving.discountsm.vote.UserVoteEntity;
+import java.net.URI;
+import java.util.UUID;
 import org.joda.money.Money;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.util.UriComponentsBuilder;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class DealsControllerTest {
-
-  @LocalServerPort
-  private int port;
-
-  @Autowired
-  private TestRestTemplate testRestTemplate;
-
-  private static final DealEntity dealEntity = new DealEntity(
-      "title",
-      "description",
-      Money.of(GBP, 10),
-      Money.of(GBP, 11),
-      10,
-      5,
-      new DateTime(2021, 8, 16, 2, 30),
-      new DateTime(2021, 8, 16, 2, 30),
-      "link",
-      "image"
-  );
+class DealsControllerTest extends EntityTestSupport {
 
   @Test
   public void itCanCreateDeal() {
-    ResponseEntity<String> result = this.testRestTemplate.postForEntity(
-        "http://localhost:" + this.port + "/deals", dealEntity, String.class);
-    then(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+    UUID dealId = givenADeal();
 
-    ResponseEntity<DealEntity> deal = this.testRestTemplate.getForEntity(
-        "http://localhost:" + this.port + "/deals/" + dealEntity.getId(), DealEntity.class);
-    then(deal.getBody()).usingRecursiveComparison().isEqualTo(dealEntity);
+    then(getDeal(dealId)).usingRecursiveComparison().ignoringFields("id").isEqualTo(DEAL_ENTITY);
   }
 
   @Test
   public void itCanUpdateDeal() {
-    ResponseEntity<String> result = this.testRestTemplate.postForEntity(
-        "http://localhost:" + this.port + "/deals", dealEntity, String.class);
-    then(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+    UUID dealId = givenADeal();
 
     DealEntity updatedDealEntity = new DealEntity(
         "new title",
@@ -64,21 +42,100 @@ class DealsControllerTest {
         "new link",
         "new image"
     );
-    this.testRestTemplate.put(
-        "http://localhost:" + this.port + "/deals/" + dealEntity.getId(), updatedDealEntity);
 
-    ResponseEntity<DealEntity> deal = this.testRestTemplate.getForEntity(
-        "http://localhost:" + this.port + "/deals/" + dealEntity.getId(), DealEntity.class);
-    then(deal.getBody()).usingRecursiveComparison().ignoringFields("id").isEqualTo(updatedDealEntity);
+    URI uri = UriComponentsBuilder.newInstance()
+        .scheme("http")
+        .host("localhost")
+        .port(port)
+        .path("/deals/{dealId}")
+        .buildAndExpand(dealId)
+        .toUri();
+
+    testRestTemplate.exchange(uri, HttpMethod.PUT, new HttpEntity<>(updatedDealEntity), DealEntity.class);
+
+    then(getDeal(dealId)).usingRecursiveComparison().ignoringFields("id").isEqualTo(updatedDealEntity);
   }
 
   @Test
   public void itCanGetAllDeals() {
-    this.testRestTemplate.put(
-        "http://localhost:" + this.port + "/deals", dealEntity);
+    UUID dealId = givenADeal();
+    URI uri = UriComponentsBuilder.newInstance()
+        .scheme("http")
+        .host("localhost")
+        .port(port)
+        .path("/deals")
+        .build()
+        .toUri();
 
-    ResponseEntity<DealEntity[]> deals = this.testRestTemplate.getForEntity(
-        "http://localhost:" + this.port + "/deals", DealEntity[].class);
-    then(deals.getBody()).hasOnlyOneElementSatisfying(entity -> then(entity).usingRecursiveComparison().isEqualTo(dealEntity));
+    ResponseEntity<DealEntity[]> dealsResponse = testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), DealEntity[].class);
+    then(dealsResponse.getBody()).extracting(DealEntity::getId).contains(dealId);
+  }
+
+  @Test
+  public void itCanUpvoteDeal() {
+    UUID userId = givenAUser();
+    UUID dealId = givenADeal();
+
+    URI uri = UriComponentsBuilder.newInstance()
+        .scheme("http")
+        .host("localhost")
+        .port(port)
+        .path("/deals/{dealId}")
+        .path("/user/{userId}")
+        .path("/up-vote")
+        .buildAndExpand(dealId, userId)
+        .toUri();
+    ResponseEntity<String> voteCreateResponse = testRestTemplate.exchange(uri, HttpMethod.PUT, new HttpEntity<>(new HttpHeaders()), String.class);
+    then(voteCreateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    uri = UriComponentsBuilder.newInstance()
+        .scheme("http")
+        .host("localhost")
+        .port(port)
+        .path("/deals/{dealId}")
+        .path("/user/{userId}")
+        .buildAndExpand(dealId, userId)
+        .toUri();
+    ResponseEntity<UserVoteEntity> voteGetResponse = testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), UserVoteEntity.class);
+    then(voteGetResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+    then(voteGetResponse.getBody()).usingRecursiveComparison().isEqualTo(new UserVoteEntity(userId, dealId, 1));
+
+    ResponseEntity<DealEntity> deal = this.testRestTemplate.getForEntity(
+        "http://localhost:" + this.port + "/deals/" + dealId, DealEntity.class);
+    then(deal.getBody()).extracting(DealEntity::getUpVotes).isEqualTo(11);
+  }
+
+  @Test
+  public void itCanDownVoteDeal() {
+    UUID userId = givenAUser();
+    UUID dealId = givenADeal();
+
+    URI uri = UriComponentsBuilder.newInstance()
+        .scheme("http")
+        .host("localhost")
+        .port(port)
+        .path("/deals/{dealId}")
+        .path("/user/{userId}")
+        .path("/down-vote")
+        .buildAndExpand(dealId, userId)
+        .toUri();
+    ResponseEntity<String> voteCreateResponse = testRestTemplate.exchange(uri, HttpMethod.PUT, new HttpEntity<>(new HttpHeaders()), String.class);
+    then(voteCreateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    uri = UriComponentsBuilder.newInstance()
+        .scheme("http")
+        .host("localhost")
+        .port(port)
+        .path("/deals/{dealId}")
+        .path("/user/{userId}")
+        .buildAndExpand(dealId, userId)
+        .toUri();
+    ResponseEntity<UserVoteEntity> voteGetResponse = testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), UserVoteEntity.class);
+    then(voteGetResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+    then(voteGetResponse.getBody()).usingRecursiveComparison().isEqualTo(new UserVoteEntity(userId, dealId, -1));
+
+    ResponseEntity<DealEntity> deal = this.testRestTemplate.getForEntity(
+        "http://localhost:" + this.port + "/deals/" + dealId, DealEntity.class);
+    then(deal.getBody()).extracting(DealEntity::getUpVotes).isEqualTo(9);
   }
 }
