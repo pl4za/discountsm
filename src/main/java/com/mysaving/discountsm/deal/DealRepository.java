@@ -1,7 +1,8 @@
 package com.mysaving.discountsm.deal;
 
+import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DealRepository extends JpaRepository<DealEntity, Integer> {
+public interface DealRepository extends JpaRepository<DealEntity, UUID> {
 
 }

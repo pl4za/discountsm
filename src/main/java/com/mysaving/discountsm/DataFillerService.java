@@ -6,7 +6,6 @@ import com.mysaving.discountsm.deal.DealEntity;
 import com.mysaving.discountsm.deal.DealRepository;
 import java.io.IOException;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import org.joda.money.Money;
 import org.joda.time.DateTime;
@@ -19,7 +18,7 @@ public class DataFillerService {
   @Autowired
   private DealRepository dealRepository;
 
-  @PostConstruct
+  //@PostConstruct
   @Transactional
   public void fillData() throws IOException {
     DealEntity dealEntity = new DealEntity(
