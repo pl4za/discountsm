@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Entity
-@IdClass(VoteId.class)
+@IdClass(UserVoteId.class)
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "user_vote")

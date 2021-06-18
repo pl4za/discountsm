@@ -1,6 +1,5 @@
 package com.mysaving.discountsm.vote;
 
-import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface VoteRepository extends JpaRepository<UserVoteEntity, UUID> {}
+public interface VoteRepository extends JpaRepository<UserVoteEntity, UserVoteId> {}

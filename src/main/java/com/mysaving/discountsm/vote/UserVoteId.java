@@ -4,12 +4,14 @@ import com.google.common.base.Objects;
 import java.io.Serializable;
 import java.util.UUID;
 
-public class VoteId implements Serializable {
+public class UserVoteId implements Serializable {
 
   private UUID userId;
   private UUID dealId;
 
-  public VoteId(UUID userId, UUID dealId) {
+  public UserVoteId() {}
+
+  public UserVoteId(UUID userId, UUID dealId) {
     this.userId = userId;
     this.dealId = dealId;
   }
@@ -34,8 +36,8 @@ public class VoteId implements Serializable {
   public boolean equals(Object o) {
     if (this == o) { return true; }
     if (o == null || getClass() != o.getClass()) { return false; }
-    VoteId voteId = (VoteId) o;
-    return Objects.equal(userId, voteId.userId) && Objects.equal(dealId, voteId.dealId);
+    UserVoteId userVoteId = (UserVoteId) o;
+    return Objects.equal(userId, userVoteId.userId) && Objects.equal(dealId, userVoteId.dealId);
   }
 
   @Override

@@ -4,10 +4,11 @@ import static org.joda.money.CurrencyUnit.GBP;
 
 import com.mysaving.discountsm.deal.DealEntity;
 import com.mysaving.discountsm.deal.DealRepository;
+import com.mysaving.discountsm.user.UserEntity;
 import com.mysaving.discountsm.user.UserRepository;
+import com.mysaving.discountsm.vote.UserVoteEntity;
 import com.mysaving.discountsm.vote.VoteRepository;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import org.joda.money.Money;
 import org.joda.time.DateTime;
@@ -26,7 +27,7 @@ public class DataFillerService {
   @Autowired
   private VoteRepository voteRepository;
 
-  @PostConstruct
+  //@PostConstruct
   @Transactional
   public void fillData() {
     // deals
@@ -60,11 +61,9 @@ public class DataFillerService {
 
     dealRepository.saveAll(List.of(dealEntity, dealEntity2));
 
-    /*
     // user and vote
-    UserEntity userEntity = new UserEntity("jason", Collections.emptyList());
+    UserEntity userEntity = new UserEntity("jason");
     userRepository.save(userEntity);
-    voteRepository.save(new UserVoteEntity(userEntity, dealEntity, 1));
-    */
+    voteRepository.save(new UserVoteEntity(userEntity.getId(), dealEntity.getId(), 1));
   }
 }
