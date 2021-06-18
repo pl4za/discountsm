@@ -4,8 +4,10 @@ import static org.joda.money.CurrencyUnit.GBP;
 
 import com.mysaving.discountsm.deal.DealEntity;
 import com.mysaving.discountsm.deal.DealRepository;
-import java.io.IOException;
+import com.mysaving.discountsm.user.UserRepository;
+import com.mysaving.discountsm.vote.VoteRepository;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import org.joda.money.Money;
 import org.joda.time.DateTime;
@@ -18,9 +20,16 @@ public class DataFillerService {
   @Autowired
   private DealRepository dealRepository;
 
-  //@PostConstruct
+  @Autowired
+  private UserRepository userRepository;
+
+  @Autowired
+  private VoteRepository voteRepository;
+
+  @PostConstruct
   @Transactional
-  public void fillData() throws IOException {
+  public void fillData() {
+    // deals
     DealEntity dealEntity = new DealEntity(
         "Untitled Goose Game for Nintendo Switch (Argos price match) +£3.99 non Prime",
         "Amazon have price matched Argos' price for this Nintendo Switch game. If you were after it from Argos and couldn't find stock before it sold out, this will hopefully be luckier for you! £3.99 shipping if you're not a Prime customer.",
@@ -50,5 +59,12 @@ public class DataFillerService {
     );
 
     dealRepository.saveAll(List.of(dealEntity, dealEntity2));
+
+    /*
+    // user and vote
+    UserEntity userEntity = new UserEntity("jason", Collections.emptyList());
+    userRepository.save(userEntity);
+    voteRepository.save(new UserVoteEntity(userEntity, dealEntity, 1));
+    */
   }
 }
