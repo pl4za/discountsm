@@ -6,7 +6,6 @@ import com.mysaving.discountsm.deal.DealEntity;
 import com.mysaving.discountsm.deal.DealRepository;
 import com.mysaving.discountsm.user.UserEntity;
 import com.mysaving.discountsm.user.UserRepository;
-import com.mysaving.discountsm.vote.UserVoteEntity;
 import com.mysaving.discountsm.vote.VoteRepository;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -37,8 +36,8 @@ public class DataFillerService {
         "Amazon have price matched Argos' price for this Nintendo Switch game. If you were after it from Argos and couldn't find stock before it sold out, this will hopefully be luckier for you! £3.99 shipping if you're not a Prime customer.",
         Money.of(GBP, 16.99),
         Money.of(GBP, 20.99),
-        321,
-        34,
+        0,
+        0,
         new DateTime(2021, 8, 16, 2, 30),
         new DateTime(2021, 8, 16, 2, 30).plusDays(5),
         "https://www.currys.co.uk/gbuk/gaming/console-gaming/consoles/nintendo-game-watch-super-mario-bros-10218185-pdt.html",
@@ -52,8 +51,8 @@ public class DataFillerService {
             + "All sizes available.",
         Money.of(GBP, 10.99),
         Money.of(GBP, 19.99),
-        16,
-        5,
+        0,
+        0,
         new DateTime(2021, 6, 16, 2, 30),
         new DateTime(2021, 5, 20, 2, 30).plusHours(1),
         "https://www.currys.co.uk/gbuk/gaming/console-gaming/consoles/nintendo-game-watch-super-mario-bros-10218185-pdt.html",
@@ -65,6 +64,5 @@ public class DataFillerService {
     // user and vote
     UserEntity userEntity = new UserEntity("jason");
     userRepository.save(userEntity);
-    voteRepository.save(new UserVoteEntity(userEntity.getId(), dealEntity.getId(), 1));
   }
 }
