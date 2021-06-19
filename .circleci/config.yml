@@ -11,12 +11,20 @@ jobs:
     # A list of available CircleCI Docker Convenience Images are available here: https://circleci.com/developer/images/image/cimg/openjdk
     docker:
       - image: cimg/openjdk:16.0
+        environment:
+          TEST_DATABASE_URL: postgresql://postgres@localhost/circle_test
       - image: circleci/postgres:13.3-ram
         environment:
           POSTGRES_HOST_AUTH_METHOD: trust
     steps:
       # Checkout the code as the first step.
       - checkout
+      - run: sudo apt-get update
+      - run: sudo apt-get install postgresql-client-9.6
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "CREATE SCHEMA discountsm;"
       # Use mvn clean and package as the standard maven build phase
       - run:
           name: Build
