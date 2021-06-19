@@ -82,7 +82,7 @@ class DealsControllerTest extends EntityTestSupport {
         .host("localhost")
         .port(port)
         .path("/deals")
-        .path("/user/{userId}")
+        .path("/users/{userId}")
         .buildAndExpand(userId)
         .toUri();
 
@@ -135,7 +135,7 @@ class DealsControllerTest extends EntityTestSupport {
         .host("localhost")
         .port(port)
         .path("/deals/{dealId}")
-        .path("/user/{userId}")
+        .path("/users/{userId}")
         .path("/up-vote")
         .buildAndExpand(dealId, userId)
         .toUri();
@@ -147,7 +147,7 @@ class DealsControllerTest extends EntityTestSupport {
         .host("localhost")
         .port(port)
         .path("/deals/{dealId}")
-        .path("/user/{userId}")
+        .path("/users/{userId}")
         .buildAndExpand(dealId, userId)
         .toUri();
     ResponseEntity<UserVoteEntity> voteGetResponse = testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), UserVoteEntity.class);
@@ -161,7 +161,7 @@ class DealsControllerTest extends EntityTestSupport {
         .host("localhost")
         .port(port)
         .path("/deals/{dealId}")
-        .path("/user/{userId}")
+        .path("/users/{userId}")
         .path("/down-vote")
         .buildAndExpand(dealId, userId)
         .toUri();
@@ -173,7 +173,7 @@ class DealsControllerTest extends EntityTestSupport {
         .host("localhost")
         .port(port)
         .path("/deals/{dealId}")
-        .path("/user/{userId}")
+        .path("/users/{userId}")
         .buildAndExpand(dealId, userId)
         .toUri();
     ResponseEntity<UserVoteEntity> voteGetResponse = testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), UserVoteEntity.class);

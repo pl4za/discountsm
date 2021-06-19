@@ -67,7 +67,7 @@ public class DealsController {
   }
 
   @CrossOrigin(origins = "http://localhost:3000")
-  @RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
+  @RequestMapping(value = "/users/{userId}", method = RequestMethod.GET)
   public List<DealWithUserVote> getAllDealsWithUserVote(@PathVariable(value = "userId") UUID userId) {
     return dealRepository.findAll().stream()
         .map(deal -> new DealWithUserVote(
@@ -78,7 +78,7 @@ public class DealsController {
   }
 
   @CrossOrigin(origins = "http://localhost:3000")
-  @RequestMapping(value = "/{dealId}/user/{userId}", method = RequestMethod.GET)
+  @RequestMapping(value = "/{dealId}/users/{userId}", method = RequestMethod.GET)
   public Optional<UserVoteEntity> getVote(
       @PathVariable(value = "dealId") UUID dealId,
       @PathVariable(value = "userId") UUID userId) {
@@ -86,7 +86,7 @@ public class DealsController {
   }
 
   @CrossOrigin(origins = "http://localhost:3000")
-  @RequestMapping(value = "/{dealId}/user/{userId}/up-vote", method = RequestMethod.PUT)
+  @RequestMapping(value = "/{dealId}/users/{userId}/up-vote", method = RequestMethod.PUT)
   public void upvoteDeal(
       @PathVariable(value = "dealId") UUID dealId,
       @PathVariable(value = "userId") UUID userId
@@ -95,7 +95,7 @@ public class DealsController {
   }
 
   @CrossOrigin(origins = "http://localhost:3000")
-  @RequestMapping(value = "/{dealId}/user/{userId}/down-vote", method = RequestMethod.PUT)
+  @RequestMapping(value = "/{dealId}/users/{userId}/down-vote", method = RequestMethod.PUT)
   public void downVoteDeal(
       @PathVariable(value = "dealId") UUID dealId,
       @PathVariable(value = "userId") UUID userId
