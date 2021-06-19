@@ -75,7 +75,42 @@ class DealsControllerTest extends EntityTestSupport {
   public void itCanUpvoteDeal() {
     UUID userId = givenAUser();
     UUID dealId = givenADeal();
+    upVoteDeal(userId, dealId);
 
+    ResponseEntity<DealEntity> deal = this.testRestTemplate.getForEntity(
+        "http://localhost:" + this.port + "/deals/" + dealId, DealEntity.class);
+    then(deal.getBody()).extracting(DealEntity::getUpVotes).isEqualTo(DEAL_ENTITY.getUpVotes() + 1);
+    then(deal.getBody()).extracting(DealEntity::getDownVotes).isEqualTo(DEAL_ENTITY.getDownVotes());
+
+    // Voting up will reduce the upvote count as the user has voted up before
+    downVoteDeal(userId, dealId);
+    deal = this.testRestTemplate.getForEntity(
+        "http://localhost:" + this.port + "/deals/" + dealId, DealEntity.class);
+    then(deal.getBody()).extracting(DealEntity::getUpVotes).isEqualTo(DEAL_ENTITY.getUpVotes());
+    then(deal.getBody()).extracting(DealEntity::getDownVotes).isEqualTo(DEAL_ENTITY.getDownVotes() + 1);
+  }
+
+  @Test
+  public void itCanDownVoteDeal() {
+    UUID userId = givenAUser();
+    UUID dealId = givenADeal();
+    downVoteDeal(userId, dealId);
+
+    ResponseEntity<DealEntity> deal = this.testRestTemplate.getForEntity(
+        "http://localhost:" + this.port + "/deals/" + dealId, DealEntity.class);
+    then(deal.getBody()).extracting(DealEntity::getUpVotes).isEqualTo(DEAL_ENTITY.getUpVotes());
+    then(deal.getBody()).extracting(DealEntity::getDownVotes).isEqualTo(DEAL_ENTITY.getDownVotes() + 1);
+
+    // Voting up will reduce the downVote count as the user has voted down before
+    upVoteDeal(userId, dealId);
+
+    deal = this.testRestTemplate.getForEntity(
+        "http://localhost:" + this.port + "/deals/" + dealId, DealEntity.class);
+    then(deal.getBody()).extracting(DealEntity::getUpVotes).isEqualTo(DEAL_ENTITY.getUpVotes() + 1);
+    then(deal.getBody()).extracting(DealEntity::getDownVotes).isEqualTo(DEAL_ENTITY.getDownVotes());
+  }
+
+  private void upVoteDeal(UUID userId, UUID dealId) {
     URI uri = UriComponentsBuilder.newInstance()
         .scheme("http")
         .host("localhost")
@@ -99,17 +134,9 @@ class DealsControllerTest extends EntityTestSupport {
     ResponseEntity<UserVoteEntity> voteGetResponse = testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), UserVoteEntity.class);
     then(voteGetResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
     then(voteGetResponse.getBody()).usingRecursiveComparison().isEqualTo(new UserVoteEntity(userId, dealId, 1));
-
-    ResponseEntity<DealEntity> deal = this.testRestTemplate.getForEntity(
-        "http://localhost:" + this.port + "/deals/" + dealId, DealEntity.class);
-    then(deal.getBody()).extracting(DealEntity::getUpVotes).isEqualTo(11);
   }
 
-  @Test
-  public void itCanDownVoteDeal() {
-    UUID userId = givenAUser();
-    UUID dealId = givenADeal();
-
+  private void downVoteDeal(UUID userId, UUID dealId) {
     URI uri = UriComponentsBuilder.newInstance()
         .scheme("http")
         .host("localhost")
@@ -133,9 +160,5 @@ class DealsControllerTest extends EntityTestSupport {
     ResponseEntity<UserVoteEntity> voteGetResponse = testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), UserVoteEntity.class);
     then(voteGetResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
     then(voteGetResponse.getBody()).usingRecursiveComparison().isEqualTo(new UserVoteEntity(userId, dealId, -1));
-
-    ResponseEntity<DealEntity> deal = this.testRestTemplate.getForEntity(
-        "http://localhost:" + this.port + "/deals/" + dealId, DealEntity.class);
-    then(deal.getBody()).extracting(DealEntity::getUpVotes).isEqualTo(9);
   }
 }

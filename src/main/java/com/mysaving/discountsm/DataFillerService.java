@@ -9,6 +9,7 @@ import com.mysaving.discountsm.user.UserRepository;
 import com.mysaving.discountsm.vote.UserVoteEntity;
 import com.mysaving.discountsm.vote.VoteRepository;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import org.joda.money.Money;
 import org.joda.time.DateTime;
@@ -27,7 +28,7 @@ public class DataFillerService {
   @Autowired
   private VoteRepository voteRepository;
 
-  //@PostConstruct
+  @PostConstruct
   @Transactional
   public void fillData() {
     // deals

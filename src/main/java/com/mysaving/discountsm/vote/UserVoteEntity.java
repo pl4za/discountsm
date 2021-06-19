@@ -9,9 +9,11 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Data
 @Entity
+@DynamicUpdate
 @IdClass(UserVoteId.class)
 @AllArgsConstructor
 @NoArgsConstructor

@@ -9,6 +9,7 @@ import java.net.URI;
 import java.util.UUID;
 import org.joda.money.Money;
 import org.joda.time.DateTime;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -29,20 +30,25 @@ public class EntityTestSupport {
   @LocalServerPort
   public int port;
 
-  public static final DealEntity DEAL_ENTITY = new DealEntity(
-      "title",
-      "description",
-      Money.of(GBP, 10),
-      Money.of(GBP, 11),
-      10,
-      5,
-      new DateTime(2021, 8, 16, 2, 30),
-      new DateTime(2021, 8, 16, 2, 30),
-      "link",
-      "image"
-  );
+  public DealEntity DEAL_ENTITY;
+  public UserEntity USER_ENTITY;
 
-  public static final UserEntity USER_ENTITY = new UserEntity("jason");
+  @BeforeEach
+  void setUp() {
+    DEAL_ENTITY = new DealEntity(
+        "title",
+        "description",
+        Money.of(GBP, 10),
+        Money.of(GBP, 11),
+        0,
+        0,
+        new DateTime(2021, 8, 16, 2, 30),
+        new DateTime(2021, 8, 16, 2, 30),
+        "link",
+        "image"
+    );
+    USER_ENTITY = new UserEntity("jason");
+  }
 
   // CREATE
   public UUID givenAUser() {

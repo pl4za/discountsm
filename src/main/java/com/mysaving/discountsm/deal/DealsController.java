@@ -74,7 +74,6 @@ public class DealsController {
   }
 
   @CrossOrigin(origins = "http://localhost:3000")
-  @Transactional
   @RequestMapping(value = "/{dealId}/user/{userId}/up-vote", method = RequestMethod.PUT)
   public void upvoteDeal(
       @PathVariable(value = "dealId") UUID dealId,
@@ -84,7 +83,6 @@ public class DealsController {
   }
 
   @CrossOrigin(origins = "http://localhost:3000")
-  @Transactional
   @RequestMapping(value = "/{dealId}/user/{userId}/down-vote", method = RequestMethod.PUT)
   public void downVoteDeal(
       @PathVariable(value = "dealId") UUID dealId,
@@ -93,6 +91,7 @@ public class DealsController {
     vote(dealId, userId, -1);
   }
 
+  @Transactional
   private void vote(UUID dealId, UUID userId, int vote) {
     if (userRepository.findById(userId).isEmpty()) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND");
@@ -102,12 +101,54 @@ public class DealsController {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "DEAL_NOT_FOUND");
     }
 
+    // create/update user and deal vote
     UserVoteId userVoteId = new UserVoteId(userId, dealId);
     Optional<UserVoteEntity> userVote = voteRepository.findById(userVoteId);
     userVote.ifPresentOrElse(
-        uv -> uv.setVote(vote), // update
-        () -> voteRepository.save(new UserVoteEntity(userId, dealId, vote)) // create
+        uv -> {
+          // remove previous vote from deal
+          dealRepository.findById(dealId).ifPresent(deal -> {
+            if (uv.getVote() == 1) {
+              deal.setUpVotes(deal.getUpVotes() - 1);
+              dealRepository.save(deal);
+            } else if (uv.getVote() == -1) {
+              deal.setDownVotes(deal.getDownVotes() - 1);
+              dealRepository.save(deal);
+            } else {
+              throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "INVALID_VOTE_VALUE");
+            }
+          });
+          // and update user vote
+          uv.setVote(vote);
+          voteRepository.save(uv);
+          dealRepository.findById(dealId).ifPresent(deal -> {
+            if (vote == 1) {
+              deal.setUpVotes(deal.getUpVotes() + 1);
+              dealRepository.save(deal);
+            } else if (vote == -1) {
+              deal.setDownVotes(deal.getDownVotes() + 1);
+              dealRepository.save(deal);
+            } else {
+              throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "INVALID_VOTE_VALUE");
+            }
+          });
+        },
+        () -> {
+          // add new vote to deal
+          dealRepository.findById(dealId).ifPresent(deal -> {
+            if (vote == 1) {
+              deal.setUpVotes(deal.getUpVotes() + 1);
+              dealRepository.save(deal);
+            } else if (vote == -1) {
+              deal.setDownVotes(deal.getDownVotes() + 1);
+              dealRepository.save(deal);
+            } else {
+              throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "INVALID_VOTE_VALUE");
+            }
+          });
+          // and add new user vote
+          voteRepository.save(new UserVoteEntity(userId, dealId, vote));
+        }
     );
-    dealRepository.findById(dealId).ifPresent(deal -> deal.setUpVotes(deal.getUpVotes() + vote));
   }
 }
