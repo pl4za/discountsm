@@ -7,6 +7,7 @@ import com.mysaving.discountsm.vote.VoteRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -63,6 +64,17 @@ public class DealsController {
   @RequestMapping(method = RequestMethod.GET)
   public List<DealEntity> getAllDeals() {
     return dealRepository.findAll();
+  }
+
+  @CrossOrigin(origins = "http://localhost:3000")
+  @RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
+  public List<DealWithUserVote> getAllDealsWithUserVote(@PathVariable(value = "userId") UUID userId) {
+    return dealRepository.findAll().stream()
+        .map(deal -> new DealWithUserVote(
+            deal,
+            voteRepository.findById(new UserVoteId(userId, deal.getId())).map(UserVoteEntity::getVote).orElse(0))
+        )
+        .collect(Collectors.toList());
   }
 
   @CrossOrigin(origins = "http://localhost:3000")

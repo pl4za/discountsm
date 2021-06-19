@@ -72,6 +72,25 @@ class DealsControllerTest extends EntityTestSupport {
   }
 
   @Test
+  public void itCanGetAllDealsWithUserVote() {
+    UUID userId = givenAUser();
+    UUID dealId = givenADeal();
+    upVoteDeal(userId, dealId);
+
+    URI uri = UriComponentsBuilder.newInstance()
+        .scheme("http")
+        .host("localhost")
+        .port(port)
+        .path("/deals")
+        .path("/user/{userId}")
+        .buildAndExpand(userId)
+        .toUri();
+
+    ResponseEntity<DealWithUserVote[]> dealsResponse = testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), DealWithUserVote[].class);
+    then(dealsResponse.getBody()).extracting(DealWithUserVote::getUserVote).contains(1);
+  }
+
+  @Test
   public void itCanUpvoteDeal() {
     UUID userId = givenAUser();
     UUID dealId = givenADeal();
