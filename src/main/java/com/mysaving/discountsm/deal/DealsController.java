@@ -107,48 +107,46 @@ public class DealsController {
     userVote.ifPresentOrElse(
         uv -> {
           // remove previous vote from deal
-          dealRepository.findById(dealId).ifPresent(deal -> {
-            if (uv.getVote() == 1) {
-              deal.setUpVotes(deal.getUpVotes() - 1);
-              dealRepository.save(deal);
-            } else if (uv.getVote() == -1) {
-              deal.setDownVotes(deal.getDownVotes() - 1);
-              dealRepository.save(deal);
-            } else {
-              throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "INVALID_VOTE_VALUE");
-            }
-          });
+          removePreviousUserVoteFromDeal(dealId, uv.getVote());
           // and update user vote
           uv.setVote(vote);
           voteRepository.save(uv);
-          dealRepository.findById(dealId).ifPresent(deal -> {
-            if (vote == 1) {
-              deal.setUpVotes(deal.getUpVotes() + 1);
-              dealRepository.save(deal);
-            } else if (vote == -1) {
-              deal.setDownVotes(deal.getDownVotes() + 1);
-              dealRepository.save(deal);
-            } else {
-              throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "INVALID_VOTE_VALUE");
-            }
-          });
+          updateDealVote(dealId, vote);
         },
         () -> {
           // add new vote to deal
-          dealRepository.findById(dealId).ifPresent(deal -> {
-            if (vote == 1) {
-              deal.setUpVotes(deal.getUpVotes() + 1);
-              dealRepository.save(deal);
-            } else if (vote == -1) {
-              deal.setDownVotes(deal.getDownVotes() + 1);
-              dealRepository.save(deal);
-            } else {
-              throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "INVALID_VOTE_VALUE");
-            }
-          });
+          updateDealVote(dealId, vote);
           // and add new user vote
           voteRepository.save(new UserVoteEntity(userId, dealId, vote));
         }
     );
+  }
+
+  private void removePreviousUserVoteFromDeal(UUID dealId, int vote) {
+    dealRepository.findById(dealId).ifPresent(deal -> {
+      if (vote == 1) {
+        deal.setUpVotes(deal.getUpVotes() - 1);
+        dealRepository.save(deal);
+      } else if (vote == -1) {
+        deal.setDownVotes(deal.getDownVotes() - 1);
+        dealRepository.save(deal);
+      } else {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "INVALID_VOTE_VALUE");
+      }
+    });
+  }
+
+  private void updateDealVote(UUID dealId, int vote) {
+    dealRepository.findById(dealId).ifPresent(deal -> {
+      if (vote == 1) {
+        deal.setUpVotes(deal.getUpVotes() + 1);
+        dealRepository.save(deal);
+      } else if (vote == -1) {
+        deal.setDownVotes(deal.getDownVotes() + 1);
+        dealRepository.save(deal);
+      } else {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "INVALID_VOTE_VALUE");
+      }
+    });
   }
 }
