@@ -62,8 +62,10 @@ public class DealsController {
 
   @CrossOrigin(origins = "http://localhost:3000")
   @RequestMapping(method = RequestMethod.GET)
-  public List<DealEntity> getAllDeals() {
-    return dealRepository.findAll();
+  public List<DealWithUserVote> getAllDeals() {
+    return dealRepository.findAll().stream()
+        .map(deal -> new DealWithUserVote(deal, 0))
+        .collect(Collectors.toList());
   }
 
   @CrossOrigin(origins = "http://localhost:3000")
