@@ -1,4 +1,4 @@
 CREATE TABLE person (
      id UUID PRIMARY KEY,
-     username TEXT
+     username TEXT UNIQUE NOT NULL
      );
