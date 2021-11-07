@@ -31,6 +31,9 @@ public class PersonController {
   @CrossOrigin(origins = "http://localhost:3000")
   @RequestMapping(method = RequestMethod.POST)
   public void createPerson(@RequestBody PersonEntity personEntity) {
+    if (personRepository.findById(personEntity.getId()).isPresent()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "USERNAME_ALREADY_EXISTS");
+    }
     personRepository.save(personEntity);
   }
 

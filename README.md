@@ -7,9 +7,9 @@ Deals, discounts and vouchers.
 ### PostgreSQL DB:
 
 ```
-docker pull postgres:13 docker run --name dev-postgres -p 5432:5432 -e
-POSTGRES_HOST_AUTH_METHOD=trust -d postgres:13 docker exec dev-postgres psql -U postgres -c "CREATE
-DATABASE circle_test" postgres
+docker pull postgres:13 
+docker run --name dev-postgres -p 5432:5432 -e POSTGRES_HOST_AUTH_METHOD=trust -d postgres:13 
+docker exec dev-postgres psql -U postgres -c "CREATE DATABASE circle_test"
 ```
 
 ## Other

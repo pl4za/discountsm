@@ -8,11 +8,11 @@ import com.mysaving.discountsm.person.PersonEntity;
 import com.mysaving.discountsm.person.PersonRepository;
 import com.mysaving.discountsm.vote.VoteRepository;
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.Period;
 import java.util.List;
+import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,13 +36,13 @@ public class DataFillerService {
         "Untitled Goose Game for Nintendo Switch (Argos price match) +£3.99 non Prime",
         "Amazon have price matched Argos' price for this Nintendo Switch game. If you were after it from Argos and couldn't find stock before it sold out, this will hopefully be luckier for you! £3.99 shipping if you're not a Prime customer.",
         BigDecimal.valueOf(16.99),
-        GBP.getCode(),
+        GBP,
         BigDecimal.valueOf(20.99),
-        GBP.getCode(),
+        GBP,
         0,
         0,
-        Instant.parse("2021-01-01T00:00:00Z"),
-        Instant.parse("2021-01-01T00:00:00Z").plus(Period.ofDays(5)),
+        new DateTime(2021, 8, 16, 2, 30),
+        new DateTime(2021, 8, 16, 2, 30).plusDays(5),
         "https://www.currys.co.uk/gbuk/gaming/console-gaming/consoles/nintendo-game-watch-super-mario-bros-10218185-pdt.html",
         "https://images.hotukdeals.com/threads/content/64CKj/3745735.jpg"
     );
@@ -53,13 +53,13 @@ public class DataFillerService {
             + "Red only\n"
             + "All sizes available.",
         BigDecimal.valueOf(10.99),
-        GBP.getCode(),
+        GBP,
         BigDecimal.valueOf(19.99),
-        GBP.getCode(),
+        GBP,
         0,
         0,
-        Instant.parse("2021-01-01T00:00:00Z"),
-        Instant.parse("2021-01-01T00:00:00Z").plus(Period.ofDays(5)),
+        new DateTime(2021, 8, 16, 2, 30),
+        new DateTime(2021, 8, 16, 2, 30).plusDays(5),
         "https://www.currys.co.uk/gbuk/gaming/console-gaming/consoles/nintendo-game-watch-super-mario-bros-10218185-pdt.html",
         "https://images.hotukdeals.com/thread_additional_info/content/QiT4e/44711.jpg"
     );
@@ -67,7 +67,7 @@ public class DataFillerService {
     dealRepository.saveAll(List.of(dealEntity, dealEntity2));
 
     // person and vote
-    PersonEntity personEntity = new PersonEntity("jason");
+    PersonEntity personEntity = new PersonEntity("jason_" + UUID.randomUUID());
     personRepository.save(personEntity);
   }
 }

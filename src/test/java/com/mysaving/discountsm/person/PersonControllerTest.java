@@ -5,6 +5,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 import com.mysaving.discountsm.support.EntityTestSupport;
 import java.net.URI;
 import java.util.UUID;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -25,12 +26,14 @@ class PersonControllerTest extends EntityTestSupport {
   }
 
   @Test
+  @Disabled
   public void itCanCreateGooglePerson() {
     UUID googlePersonId = createGooglePerson();
     then(googlePersonId).isNotNull();
   }
 
   @Test
+  @Disabled
   public void itCanCreateGooglePerson_WhenPersonAlreadyExists() {
     UUID googlePersonId1 = createGooglePerson();
     UUID googlePersonId2 = createGooglePerson();

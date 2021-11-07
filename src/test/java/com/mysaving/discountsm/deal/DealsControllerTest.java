@@ -6,9 +6,10 @@ import static org.joda.money.CurrencyUnit.GBP;
 import com.mysaving.discountsm.support.EntityTestSupport;
 import com.mysaving.discountsm.vote.PersonVoteEntity;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URI;
-import java.time.Instant;
 import java.util.UUID;
+import org.joda.time.DateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -23,7 +24,7 @@ class DealsControllerTest extends EntityTestSupport {
   public void itCanCreateDeal() {
     UUID dealId = givenADeal();
 
-    then(getDeal(dealId)).usingRecursiveComparison().ignoringFields("id").isEqualTo(DEAL_ENTITY);
+    then(getDeal(dealId)).extracting(DealEntity::getId).isEqualTo(dealId);
   }
 
   @Test
@@ -33,14 +34,14 @@ class DealsControllerTest extends EntityTestSupport {
     DealEntity updatedDealEntity = new DealEntity(
         "new title",
         "new description",
-        BigDecimal.valueOf(11),
-        GBP.getCode(),
-        BigDecimal.valueOf(12),
-        GBP.getCode(),
+        BigDecimal.valueOf(11.00).setScale(2, RoundingMode.CEILING),
+        GBP,
+        BigDecimal.valueOf(12.00).setScale(2, RoundingMode.CEILING),
+        GBP,
         11,
         6,
-        Instant.parse("2021-01-01T00:00:00Z"),
-        Instant.parse("2021-01-01T00:00:00Z"),
+        new DateTime(2021, 8, 16, 2, 30),
+        new DateTime(2021, 8, 16, 2, 30).plusDays(5),
         "new link",
         "new image"
     );
@@ -69,8 +70,8 @@ class DealsControllerTest extends EntityTestSupport {
         .build()
         .toUri();
 
-    ResponseEntity<DealEntity[]> dealsResponse = testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), DealEntity[].class);
-    then(dealsResponse.getBody()).extracting(DealEntity::getId).contains(dealId);
+    ResponseEntity<DealWithPersonVote[]> dealsResponse = testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), DealWithPersonVote[].class);
+    then(dealsResponse.getBody()).extracting(DealWithPersonVote::getDealEntity).extracting(DealEntity::getId).contains(dealId);
   }
 
   @Test
