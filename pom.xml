@@ -93,6 +93,10 @@
       <artifactId>google-api-client</artifactId>
       <version>1.31.3</version>
     </dependency>
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-core</artifactId>
+    </dependency>
 
     <!--test-->
     <dependency>

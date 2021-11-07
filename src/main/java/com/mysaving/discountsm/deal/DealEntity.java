@@ -1,6 +1,7 @@
 package com.mysaving.discountsm.deal;
 
 import com.mysaving.discountsm.common.UUIDEntity;
+import java.math.BigDecimal;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -9,7 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Type;
-import org.joda.money.Money;
+import org.joda.money.CurrencyUnit;
 import org.joda.time.DateTime;
 
 @Data
@@ -25,13 +26,13 @@ public class DealEntity extends UUIDEntity {
 
   private String description;
 
-  @Type(type = "org.jadira.usertype.moneyandcurrency.joda.PersistentMoneyAmount",
-      parameters = {@org.hibernate.annotations.Parameter(name = "currencyCode", value = "GBP")})
-  private Money newPrice;
+  private BigDecimal newPriceAmount;
 
-  @Type(type = "org.jadira.usertype.moneyandcurrency.joda.PersistentMoneyAmount",
-      parameters = {@org.hibernate.annotations.Parameter(name = "currencyCode", value = "GBP")})
-  private Money oldPrice;
+  private CurrencyUnit newPriceCurrency;
+
+  private BigDecimal oldPriceAmount;
+
+  private CurrencyUnit oldPriceCurrency;
 
   private int upVotes;
 
@@ -43,9 +44,9 @@ public class DealEntity extends UUIDEntity {
   @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
   private DateTime expiry;
 
-  private String link;
+  private String dealLink;
 
-  private String image;
+  private String imageLink;
 }
 
 

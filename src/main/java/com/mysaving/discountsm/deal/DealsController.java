@@ -1,8 +1,8 @@
 package com.mysaving.discountsm.deal;
 
-import com.mysaving.discountsm.user.UserRepository;
-import com.mysaving.discountsm.vote.UserVoteEntity;
-import com.mysaving.discountsm.vote.UserVoteId;
+import com.mysaving.discountsm.person.PersonRepository;
+import com.mysaving.discountsm.vote.PersonVoteEntity;
+import com.mysaving.discountsm.vote.PersonVoteId;
 import com.mysaving.discountsm.vote.VoteRepository;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +28,7 @@ public class DealsController {
   @Autowired
   private DealRepository dealRepository;
   @Autowired
-  private UserRepository userRepository;
+  private PersonRepository personRepository;
 
   @CrossOrigin(origins = "http://localhost:3000")
   @RequestMapping(value = "/{dealId}", method = RequestMethod.GET)
@@ -49,80 +49,82 @@ public class DealsController {
     dealRepository.findById(dealId).ifPresent(existingEntity -> {
       existingEntity.setTitle(dealEntity.getTitle());
       existingEntity.setDescription(dealEntity.getDescription());
-      existingEntity.setNewPrice(dealEntity.getNewPrice());
-      existingEntity.setOldPrice(dealEntity.getOldPrice());
+      existingEntity.setNewPriceAmount(dealEntity.getNewPriceAmount());
+      existingEntity.setNewPriceCurrency(dealEntity.getNewPriceCurrency());
+      existingEntity.setOldPriceAmount(dealEntity.getOldPriceAmount());
+      existingEntity.setOldPriceCurrency(dealEntity.getOldPriceCurrency());
       existingEntity.setUpVotes(dealEntity.getUpVotes());
       existingEntity.setDownVotes(dealEntity.getDownVotes());
       existingEntity.setPosted(dealEntity.getPosted());
       existingEntity.setExpiry(dealEntity.getExpiry());
-      existingEntity.setLink(dealEntity.getLink());
-      existingEntity.setImage(dealEntity.getImage());
+      existingEntity.setDealLink(dealEntity.getDealLink());
+      existingEntity.setImageLink(dealEntity.getImageLink());
     });
   }
 
   @CrossOrigin(origins = "http://localhost:3000")
   @RequestMapping(method = RequestMethod.GET)
-  public List<DealWithUserVote> getAllDeals() {
+  public List<DealWithPersonVote> getAllDeals() {
     return dealRepository.findAll().stream()
-        .map(deal -> new DealWithUserVote(deal, 0))
+        .map(deal -> new DealWithPersonVote(deal, 0))
         .collect(Collectors.toList());
   }
 
   @CrossOrigin(origins = "http://localhost:3000")
-  @RequestMapping(value = "/users/{userId}", method = RequestMethod.GET)
-  public List<DealWithUserVote> getAllDealsWithUserVote(@PathVariable(value = "userId") UUID userId) {
+  @RequestMapping(value = "/people/{personId}", method = RequestMethod.GET)
+  public List<DealWithPersonVote> getAllDealsWithPersonVote(@PathVariable(value = "personId") UUID personId) {
     return dealRepository.findAll().stream()
-        .map(deal -> new DealWithUserVote(
+        .map(deal -> new DealWithPersonVote(
             deal,
-            voteRepository.findById(new UserVoteId(userId, deal.getId())).map(UserVoteEntity::getVote).orElse(0))
+            voteRepository.findById(new PersonVoteId(personId, deal.getId())).map(PersonVoteEntity::getVote).orElse(0))
         )
         .collect(Collectors.toList());
   }
 
   @CrossOrigin(origins = "http://localhost:3000")
-  @RequestMapping(value = "/{dealId}/users/{userId}", method = RequestMethod.GET)
-  public Optional<UserVoteEntity> getVote(
+  @RequestMapping(value = "/{dealId}/people/{personId}", method = RequestMethod.GET)
+  public Optional<PersonVoteEntity> getVote(
       @PathVariable(value = "dealId") UUID dealId,
-      @PathVariable(value = "userId") UUID userId) {
-    return voteRepository.findById(new UserVoteId(userId, dealId));
+      @PathVariable(value = "personId") UUID personId) {
+    return voteRepository.findById(new PersonVoteId(personId, dealId));
   }
 
   @CrossOrigin(origins = "http://localhost:3000")
-  @RequestMapping(value = "/{dealId}/users/{userId}/up-vote", method = RequestMethod.PUT)
+  @RequestMapping(value = "/{dealId}/people/{personId}/up-vote", method = RequestMethod.PUT)
   public void upvoteDeal(
       @PathVariable(value = "dealId") UUID dealId,
-      @PathVariable(value = "userId") UUID userId
+      @PathVariable(value = "personId") UUID personId
   ) {
-    vote(dealId, userId, 1);
+    vote(dealId, personId, 1);
   }
 
   @CrossOrigin(origins = "http://localhost:3000")
-  @RequestMapping(value = "/{dealId}/users/{userId}/down-vote", method = RequestMethod.PUT)
+  @RequestMapping(value = "/{dealId}/people/{personId}/down-vote", method = RequestMethod.PUT)
   public void downVoteDeal(
       @PathVariable(value = "dealId") UUID dealId,
-      @PathVariable(value = "userId") UUID userId
+      @PathVariable(value = "personId") UUID personId
   ) {
-    vote(dealId, userId, -1);
+    vote(dealId, personId, -1);
   }
 
   @Transactional
-  private void vote(UUID dealId, UUID userId, int vote) {
-    if (userRepository.findById(userId).isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND");
+  private void vote(UUID dealId, UUID personId, int vote) {
+    if (personRepository.findById(personId).isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "PERSON_NOT_FOUND");
     }
 
     if (dealRepository.findById(dealId).isEmpty()) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "DEAL_NOT_FOUND");
     }
 
-    // create/update user and deal vote
-    UserVoteId userVoteId = new UserVoteId(userId, dealId);
-    Optional<UserVoteEntity> userVote = voteRepository.findById(userVoteId);
-    userVote.ifPresentOrElse(
+    // create/update person and deal vote
+    PersonVoteId personVoteId = new PersonVoteId(personId, dealId);
+    Optional<PersonVoteEntity> personVote = voteRepository.findById(personVoteId);
+    personVote.ifPresentOrElse(
         uv -> {
           // remove previous vote from deal
-          removePreviousUserVoteFromDeal(dealId, uv.getVote());
-          // and update user vote
+          removePreviousPersonVoteFromDeal(dealId, uv.getVote());
+          // and update person vote
           uv.setVote(vote);
           voteRepository.save(uv);
           updateDealVote(dealId, vote);
@@ -130,13 +132,13 @@ public class DealsController {
         () -> {
           // add new vote to deal
           updateDealVote(dealId, vote);
-          // and add new user vote
-          voteRepository.save(new UserVoteEntity(userId, dealId, vote));
+          // and add new person vote
+          voteRepository.save(new PersonVoteEntity(personId, dealId, vote));
         }
     );
   }
 
-  private void removePreviousUserVoteFromDeal(UUID dealId, int vote) {
+  private void removePreviousPersonVoteFromDeal(UUID dealId, int vote) {
     dealRepository.findById(dealId).ifPresent(deal -> {
       if (vote == 1) {
         deal.setUpVotes(deal.getUpVotes() - 1);

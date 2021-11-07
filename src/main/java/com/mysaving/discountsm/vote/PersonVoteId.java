@@ -4,28 +4,28 @@ import com.google.common.base.Objects;
 import java.io.Serializable;
 import java.util.UUID;
 
-public class UserVoteId implements Serializable {
+public class PersonVoteId implements Serializable {
 
-  private UUID userId;
+  private UUID personId;
   private UUID dealId;
 
-  public UserVoteId() {}
+  public PersonVoteId() {}
 
-  public UserVoteId(UUID userId, UUID dealId) {
-    this.userId = userId;
+  public PersonVoteId(UUID PersonId, UUID dealId) {
+    this.personId = PersonId;
     this.dealId = dealId;
   }
 
-  public UUID getUserId() {
-    return userId;
+  public UUID getPersonId() {
+    return personId;
   }
 
   public UUID getDealIs() {
     return dealId;
   }
 
-  public void setUserId(UUID userId) {
-    this.userId = userId;
+  public void setPersonId(UUID personId) {
+    this.personId = personId;
   }
 
   public void setDealId(UUID dealId) {
@@ -36,13 +36,13 @@ public class UserVoteId implements Serializable {
   public boolean equals(Object o) {
     if (this == o) { return true; }
     if (o == null || getClass() != o.getClass()) { return false; }
-    UserVoteId userVoteId = (UserVoteId) o;
-    return Objects.equal(userId, userVoteId.userId) && Objects.equal(dealId, userVoteId.dealId);
+    PersonVoteId personVoteId = (PersonVoteId) o;
+    return Objects.equal(personId, personVoteId.personId) && Objects.equal(dealId, personVoteId.dealId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(userId, dealId);
+    return Objects.hashCode(personId, dealId);
   }
 }
 

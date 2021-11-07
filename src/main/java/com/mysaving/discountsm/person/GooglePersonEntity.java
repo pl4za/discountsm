@@ -1,4 +1,4 @@
-package com.mysaving.discountsm.user;
+package com.mysaving.discountsm.person;
 
 import java.util.UUID;
 import javax.persistence.Column;
@@ -16,11 +16,11 @@ import org.hibernate.annotations.DynamicUpdate;
 @DynamicUpdate
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "user_google")
-public class GoogleUserEntity {
+@Table(name = "person_google")
+public class GooglePersonEntity {
 
-  @JoinColumn(name = "user_id", table = "user", referencedColumnName = "id", nullable = false, unique = true)
-  private UUID userId;
+  @JoinColumn(name = "person_id", table = "person", referencedColumnName = "id", nullable = false, unique = true)
+  private UUID personId;
 
   @Id
   @Column(nullable = false, unique = true)

@@ -4,10 +4,10 @@ import static org.assertj.core.api.BDDAssertions.then;
 import static org.joda.money.CurrencyUnit.GBP;
 
 import com.mysaving.discountsm.support.EntityTestSupport;
-import com.mysaving.discountsm.vote.UserVoteEntity;
+import com.mysaving.discountsm.vote.PersonVoteEntity;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.UUID;
-import org.joda.money.Money;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
@@ -33,8 +33,10 @@ class DealsControllerTest extends EntityTestSupport {
     DealEntity updatedDealEntity = new DealEntity(
         "new title",
         "new description",
-        Money.of(GBP, 11),
-        Money.of(GBP, 12),
+        BigDecimal.valueOf(11),
+        GBP,
+        BigDecimal.valueOf(12),
+        GBP,
         11,
         6,
         new DateTime(2021, 8, 16, 2, 30),
@@ -72,37 +74,37 @@ class DealsControllerTest extends EntityTestSupport {
   }
 
   @Test
-  public void itCanGetAllDealsWithUserVote() {
-    UUID userId = givenAUser();
+  public void itCanGetAllDealsWithPersonVote() {
+    UUID personId = givenAPerson();
     UUID dealId = givenADeal();
-    upVoteDeal(userId, dealId);
+    upVoteDeal(personId, dealId);
 
     URI uri = UriComponentsBuilder.newInstance()
         .scheme("http")
         .host("localhost")
         .port(port)
         .path("/deals")
-        .path("/users/{userId}")
-        .buildAndExpand(userId)
+        .path("/people/{personId}")
+        .buildAndExpand(personId)
         .toUri();
 
-    ResponseEntity<DealWithUserVote[]> dealsResponse = testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), DealWithUserVote[].class);
-    then(dealsResponse.getBody()).extracting(DealWithUserVote::getUserVote).contains(1);
+    ResponseEntity<DealWithPersonVote[]> dealsResponse = testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), DealWithPersonVote[].class);
+    then(dealsResponse.getBody()).extracting(DealWithPersonVote::getPersonVote).contains(1);
   }
 
   @Test
   public void itCanUpvoteDeal() {
-    UUID userId = givenAUser();
+    UUID personId = givenAPerson();
     UUID dealId = givenADeal();
-    upVoteDeal(userId, dealId);
+    upVoteDeal(personId, dealId);
 
     ResponseEntity<DealEntity> deal = this.testRestTemplate.getForEntity(
         "http://localhost:" + this.port + "/deals/" + dealId, DealEntity.class);
     then(deal.getBody()).extracting(DealEntity::getUpVotes).isEqualTo(DEAL_ENTITY.getUpVotes() + 1);
     then(deal.getBody()).extracting(DealEntity::getDownVotes).isEqualTo(DEAL_ENTITY.getDownVotes());
 
-    // Voting up will reduce the upvote count as the user has voted up before
-    downVoteDeal(userId, dealId);
+    // Voting up will reduce the upvote count as the person has voted up before
+    downVoteDeal(personId, dealId);
     deal = this.testRestTemplate.getForEntity(
         "http://localhost:" + this.port + "/deals/" + dealId, DealEntity.class);
     then(deal.getBody()).extracting(DealEntity::getUpVotes).isEqualTo(DEAL_ENTITY.getUpVotes());
@@ -111,17 +113,17 @@ class DealsControllerTest extends EntityTestSupport {
 
   @Test
   public void itCanDownVoteDeal() {
-    UUID userId = givenAUser();
+    UUID personId = givenAPerson();
     UUID dealId = givenADeal();
-    downVoteDeal(userId, dealId);
+    downVoteDeal(personId, dealId);
 
     ResponseEntity<DealEntity> deal = this.testRestTemplate.getForEntity(
         "http://localhost:" + this.port + "/deals/" + dealId, DealEntity.class);
     then(deal.getBody()).extracting(DealEntity::getUpVotes).isEqualTo(DEAL_ENTITY.getUpVotes());
     then(deal.getBody()).extracting(DealEntity::getDownVotes).isEqualTo(DEAL_ENTITY.getDownVotes() + 1);
 
-    // Voting up will reduce the downVote count as the user has voted down before
-    upVoteDeal(userId, dealId);
+    // Voting up will reduce the downVote count as the person has voted down before
+    upVoteDeal(personId, dealId);
 
     deal = this.testRestTemplate.getForEntity(
         "http://localhost:" + this.port + "/deals/" + dealId, DealEntity.class);
@@ -129,15 +131,15 @@ class DealsControllerTest extends EntityTestSupport {
     then(deal.getBody()).extracting(DealEntity::getDownVotes).isEqualTo(DEAL_ENTITY.getDownVotes());
   }
 
-  private void upVoteDeal(UUID userId, UUID dealId) {
+  private void upVoteDeal(UUID personId, UUID dealId) {
     URI uri = UriComponentsBuilder.newInstance()
         .scheme("http")
         .host("localhost")
         .port(port)
         .path("/deals/{dealId}")
-        .path("/users/{userId}")
+        .path("/people/{personId}")
         .path("/up-vote")
-        .buildAndExpand(dealId, userId)
+        .buildAndExpand(dealId, personId)
         .toUri();
     ResponseEntity<String> voteCreateResponse = testRestTemplate.exchange(uri, HttpMethod.PUT, new HttpEntity<>(new HttpHeaders()), String.class);
     then(voteCreateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -147,23 +149,23 @@ class DealsControllerTest extends EntityTestSupport {
         .host("localhost")
         .port(port)
         .path("/deals/{dealId}")
-        .path("/users/{userId}")
-        .buildAndExpand(dealId, userId)
+        .path("/people/{personId}")
+        .buildAndExpand(dealId, personId)
         .toUri();
-    ResponseEntity<UserVoteEntity> voteGetResponse = testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), UserVoteEntity.class);
+    ResponseEntity<PersonVoteEntity> voteGetResponse = testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), PersonVoteEntity.class);
     then(voteGetResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-    then(voteGetResponse.getBody()).usingRecursiveComparison().isEqualTo(new UserVoteEntity(userId, dealId, 1));
+    then(voteGetResponse.getBody()).usingRecursiveComparison().isEqualTo(new PersonVoteEntity(personId, dealId, 1));
   }
 
-  private void downVoteDeal(UUID userId, UUID dealId) {
+  private void downVoteDeal(UUID personId, UUID dealId) {
     URI uri = UriComponentsBuilder.newInstance()
         .scheme("http")
         .host("localhost")
         .port(port)
         .path("/deals/{dealId}")
-        .path("/users/{userId}")
+        .path("/people/{personId}")
         .path("/down-vote")
-        .buildAndExpand(dealId, userId)
+        .buildAndExpand(dealId, personId)
         .toUri();
     ResponseEntity<String> voteCreateResponse = testRestTemplate.exchange(uri, HttpMethod.PUT, new HttpEntity<>(new HttpHeaders()), String.class);
     then(voteCreateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -173,11 +175,11 @@ class DealsControllerTest extends EntityTestSupport {
         .host("localhost")
         .port(port)
         .path("/deals/{dealId}")
-        .path("/users/{userId}")
-        .buildAndExpand(dealId, userId)
+        .path("/people/{personId}")
+        .buildAndExpand(dealId, personId)
         .toUri();
-    ResponseEntity<UserVoteEntity> voteGetResponse = testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), UserVoteEntity.class);
+    ResponseEntity<PersonVoteEntity> voteGetResponse = testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), PersonVoteEntity.class);
     then(voteGetResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-    then(voteGetResponse.getBody()).usingRecursiveComparison().isEqualTo(new UserVoteEntity(userId, dealId, -1));
+    then(voteGetResponse.getBody()).usingRecursiveComparison().isEqualTo(new PersonVoteEntity(personId, dealId, -1));
   }
 }

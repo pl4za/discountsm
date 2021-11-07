@@ -1,4 +1,4 @@
-package com.mysaving.discountsm.user;
+package com.mysaving.discountsm.person;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;

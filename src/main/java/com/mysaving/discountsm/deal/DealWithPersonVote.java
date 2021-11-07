@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DealWithUserVote {
+public class DealWithPersonVote {
 
   private DealEntity dealEntity;
 
-  private int userVote;
+  private int personVote;
 }
 
 

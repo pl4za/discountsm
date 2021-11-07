@@ -1,4 +1,4 @@
-package com.mysaving.discountsm.user;
+package com.mysaving.discountsm.person;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import java.util.Optional;
@@ -18,54 +18,54 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("users")
-public class UserController {
+@RequestMapping("people")
+public class PersonController {
 
   @Autowired
-  private UserRepository userRepository;
+  private PersonRepository personRepository;
   @Autowired
-  private GoogleUserRepository googleUserRepository;
+  private GooglePersonRepository googlePersonRepository;
   @Autowired
   private GoogleTokenVerifier googleTokenVerifier;
 
   @CrossOrigin(origins = "http://localhost:3000")
   @RequestMapping(method = RequestMethod.POST)
-  public void createUser(@RequestBody UserEntity userEntity) {
-    userRepository.save(userEntity);
+  public void createPerson(@RequestBody PersonEntity personEntity) {
+    personRepository.save(personEntity);
   }
 
   @CrossOrigin(origins = "http://localhost:3000")
-  @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
-  public Optional<UserEntity> getUser(@PathVariable(value = "userId") UUID userId) {
-    return userRepository.findById(userId);
+  @RequestMapping(value = "/{personId}", method = RequestMethod.GET)
+  public Optional<PersonEntity> getPerson(@PathVariable(value = "personId") UUID personId) {
+    return personRepository.findById(personId);
   }
 
   @CrossOrigin(origins = "http://localhost:3000")
   @RequestMapping(value = "/auth/google", method = RequestMethod.PUT)
-  public UUID createGoogleUser(@Valid @NotBlank @RequestHeader("Authorization") String googleToken) {
-    return validateTokenAndCreateUser(googleToken);
+  public UUID createGooglePerson(@Valid @NotBlank @RequestHeader("Authorization") String googleToken) {
+    return validateTokenAndCreatePerson(googleToken);
   }
 
-  private UUID validateTokenAndCreateUser(String token) {
+  private UUID validateTokenAndCreatePerson(String token) {
     try {
       Payload payload = googleTokenVerifier.validateToken(token)
-          .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "UNABLE_TO_VALIDATE_USER"));
+          .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "UNABLE_TO_VALIDATE_PERSON"));
 
-      return googleUserRepository.findById(payload.getEmail())
-          .map(GoogleUserEntity::getUserId)
-          .orElseGet(() -> createNewGoogleUser(payload));
+      return googlePersonRepository.findById(payload.getEmail())
+          .map(GooglePersonEntity::getPersonId)
+          .orElseGet(() -> createNewGooglePerson(payload));
     } catch (Exception e) {
       e.printStackTrace();
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "UNABLE_TO_VALIDATE_USER");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "UNABLE_TO_VALIDATE_PERSON");
     }
   }
 
   @Transactional
-  private UUID createNewGoogleUser(Payload payload) {
+  private UUID createNewGooglePerson(Payload payload) {
     String name = (String) payload.get("name");
-    UserEntity userId = userRepository.save(new UserEntity(name.trim()));
-    GoogleUserEntity googleUserEntity = new GoogleUserEntity(
-        userId.getId(),
+    PersonEntity personId = personRepository.save(new PersonEntity(name.trim()));
+    GooglePersonEntity googlePersonEntity = new GooglePersonEntity(
+        personId.getId(),
         payload.getEmail(),
         name,
         (String) payload.get("picture"),
@@ -73,6 +73,6 @@ public class UserController {
         (String) payload.get("given_name"),
         (String) payload.get("family_name")
     );
-    return googleUserRepository.save(googleUserEntity).getUserId();
+    return googlePersonRepository.save(googlePersonEntity).getPersonId();
   }
 }

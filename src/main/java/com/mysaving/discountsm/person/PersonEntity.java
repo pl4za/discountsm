@@ -1,4 +1,4 @@
-package com.mysaving.discountsm.user;
+package com.mysaving.discountsm.person;
 
 import com.mysaving.discountsm.common.UUIDEntity;
 import javax.persistence.Entity;
@@ -14,9 +14,9 @@ import org.hibernate.annotations.DynamicUpdate;
 @DynamicUpdate
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "user")
+@Table(name = "person")
 @EqualsAndHashCode(callSuper = true)
-public class UserEntity extends UUIDEntity {
+public class PersonEntity extends UUIDEntity {
 
   private String username;
 }

@@ -14,15 +14,15 @@ import org.hibernate.annotations.DynamicUpdate;
 @Data
 @Entity
 @DynamicUpdate
-@IdClass(UserVoteId.class)
+@IdClass(PersonVoteId.class)
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "user_vote")
-public class UserVoteEntity {
+@Table(name = "person_vote")
+public class PersonVoteEntity {
 
   @Id
-  @JoinColumn(name = "user_id", table = "user", referencedColumnName = "id")
-  private UUID userId;
+  @JoinColumn(name = "person_id", table = "person", referencedColumnName = "id")
+  private UUID personId;
 
   @Id
   @JoinColumn(name = "deal_id", table = "deal", referencedColumnName = "id")

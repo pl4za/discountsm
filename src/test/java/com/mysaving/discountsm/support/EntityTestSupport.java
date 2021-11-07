@@ -4,10 +4,10 @@ import static org.assertj.core.api.BDDAssertions.then;
 import static org.joda.money.CurrencyUnit.GBP;
 
 import com.mysaving.discountsm.deal.DealEntity;
-import com.mysaving.discountsm.user.UserEntity;
+import com.mysaving.discountsm.person.PersonEntity;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.UUID;
-import org.joda.money.Money;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,15 +31,17 @@ public class EntityTestSupport {
   public int port;
 
   public DealEntity DEAL_ENTITY;
-  public UserEntity USER_ENTITY;
+  public PersonEntity PERSON_ENTITY;
 
   @BeforeEach
   void setUp() {
     DEAL_ENTITY = new DealEntity(
         "title",
         "description",
-        Money.of(GBP, 10),
-        Money.of(GBP, 11),
+        BigDecimal.valueOf(10),
+        GBP,
+        BigDecimal.valueOf(11),
+        GBP,
         0,
         0,
         new DateTime(2021, 8, 16, 2, 30),
@@ -47,22 +49,22 @@ public class EntityTestSupport {
         "link",
         "image"
     );
-    USER_ENTITY = new UserEntity("jason");
+    PERSON_ENTITY = new PersonEntity("jason");
   }
 
   // CREATE
-  public UUID givenAUser() {
+  public UUID givenAPerson() {
     URI uri = UriComponentsBuilder.newInstance()
         .scheme("http")
         .host("localhost")
         .port(port)
-        .path("/users")
+        .path("/people")
         .build()
         .toUri();
-    ResponseEntity<String> userResponse = testRestTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(USER_ENTITY), String.class);
-    then(userResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+    ResponseEntity<String> peopleResponse = testRestTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(PERSON_ENTITY), String.class);
+    then(peopleResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    return USER_ENTITY.getId();
+    return PERSON_ENTITY.getId();
   }
 
   public UUID givenADeal() {
@@ -92,15 +94,15 @@ public class EntityTestSupport {
     return testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), DealEntity.class).getBody();
   }
 
-  public UserEntity getUser(UUID userId) {
+  public PersonEntity getPeople(UUID personId) {
     URI uri = UriComponentsBuilder.newInstance()
         .scheme("http")
         .host("localhost")
         .port(port)
-        .path("/users/{userId}")
-        .buildAndExpand(userId)
+        .path("/people/{personId}")
+        .buildAndExpand(personId)
         .toUri();
 
-    return testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), UserEntity.class).getBody();
+    return testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), PersonEntity.class).getBody();
   }
 }
