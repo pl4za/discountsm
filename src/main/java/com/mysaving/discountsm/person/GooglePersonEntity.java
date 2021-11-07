@@ -20,7 +20,7 @@ import org.hibernate.annotations.DynamicUpdate;
 public class GooglePersonEntity {
 
   @JoinColumn(name = "person_id", table = "person", referencedColumnName = "id", nullable = false, unique = true)
-  private UUID personId;
+  private UUID id;
 
   @Id
   @Column(nullable = false, unique = true)

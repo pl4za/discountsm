@@ -52,7 +52,7 @@ public class PersonController {
           .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "UNABLE_TO_VALIDATE_PERSON"));
 
       return googlePersonRepository.findById(payload.getEmail())
-          .map(GooglePersonEntity::getPersonId)
+          .map(GooglePersonEntity::getId)
           .orElseGet(() -> createNewGooglePerson(payload));
     } catch (Exception e) {
       e.printStackTrace();
@@ -73,6 +73,6 @@ public class PersonController {
         (String) payload.get("given_name"),
         (String) payload.get("family_name")
     );
-    return googlePersonRepository.save(googlePersonEntity).getPersonId();
+    return googlePersonRepository.save(googlePersonEntity).getId();
   }
 }

@@ -7,8 +7,8 @@ import com.mysaving.discountsm.deal.DealEntity;
 import com.mysaving.discountsm.person.PersonEntity;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.time.Instant;
 import java.util.UUID;
-import org.joda.time.DateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,13 +39,13 @@ public class EntityTestSupport {
         "title",
         "description",
         BigDecimal.valueOf(10),
-        GBP,
+        GBP.getCode(),
         BigDecimal.valueOf(11),
-        GBP,
+        GBP.getCode(),
         0,
         0,
-        new DateTime(2021, 8, 16, 2, 30),
-        new DateTime(2021, 8, 16, 2, 30),
+        Instant.parse("2021-01-01T00:00:00Z"),
+        Instant.parse("2021-01-01T00:00:00Z"),
         "link",
         "image"
     );

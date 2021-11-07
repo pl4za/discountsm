@@ -7,8 +7,8 @@ import com.mysaving.discountsm.support.EntityTestSupport;
 import com.mysaving.discountsm.vote.PersonVoteEntity;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.time.Instant;
 import java.util.UUID;
-import org.joda.time.DateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -34,13 +34,13 @@ class DealsControllerTest extends EntityTestSupport {
         "new title",
         "new description",
         BigDecimal.valueOf(11),
-        GBP,
+        GBP.getCode(),
         BigDecimal.valueOf(12),
-        GBP,
+        GBP.getCode(),
         11,
         6,
-        new DateTime(2021, 8, 16, 2, 30),
-        new DateTime(2021, 8, 16, 2, 30),
+        Instant.parse("2021-01-01T00:00:00Z"),
+        Instant.parse("2021-01-01T00:00:00Z"),
         "new link",
         "new image"
     );
