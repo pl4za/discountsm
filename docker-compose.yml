@@ -16,5 +16,6 @@ services:
     image: 'postgres:14.1-alpine'
     container_name: postgres
     environment:
-      - POSTGRES_HOST_AUTH_METHOD=trust
-      - POSTGRES_DB=circle_test
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=docker_compose
+      - POSTGRES_DB=discountsm
