@@ -1,14 +1,6 @@
 version: 2.1
 
 jobs:
-  build:
-    docker:
-      - image: cimg/openjdk:17.0.1
-    steps:
-      - checkout
-      - run:
-          name: Build
-          command: mvn -B compile
   test:
     docker:
       - image: cimg/openjdk:17.0.1
@@ -23,10 +15,9 @@ jobs:
       - checkout
       - run:
           name: Build
-          command: mvn -B verify
+          command: mvn verify
 
 workflows:
   example:
     jobs:
-      - build
       - test
