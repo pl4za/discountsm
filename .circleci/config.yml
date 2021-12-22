@@ -14,7 +14,7 @@ jobs:
       - image: cimg/openjdk:17.0.1
         environment:
           TEST_DATABASE_URL: postgresql://postgres@localhost/discountsm
-      - image: cimg/postgres:14.0.0
+      - image: cimg/postgres:14.0
         environment:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: circle_ci
