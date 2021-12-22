@@ -1,6 +1,8 @@
 package com.mysaving.discountsm.deal;
 
 import com.mysaving.discountsm.repository.DealRepository;
+import com.mysaving.discountsm.support.Money;
+import com.neovisionaries.i18n.CurrencyCode;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -10,14 +12,27 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class DealService implements DealResource{
+public class DealService implements DealResource {
 
   @Autowired
   private DealRepository dealRepository;
 
   @Override
   public List<DealResponse> getAllDeals() {
-    return null;
+    return dealRepository.findAll().stream()
+        .map(deal -> new DealResponse(
+            deal.getId(),
+            deal.getTitle(),
+            deal.getDescription(),
+            Money.of(CurrencyCode.valueOf(deal.getNewPriceCurrency()), deal.getNewPriceAmount()),
+            Money.of(CurrencyCode.valueOf(deal.getOldPriceCurrency()), deal.getOldPriceAmount()),
+            deal.getUpVotes(),
+            deal.getDownVotes(),
+            deal.getPosted(),
+            deal.getExpiry(),
+            deal.getDealLink(),
+            deal.getImageLink()
+        )).toList();
   }
 
   @Override

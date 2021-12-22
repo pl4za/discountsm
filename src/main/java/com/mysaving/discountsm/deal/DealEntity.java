@@ -1,12 +1,9 @@
 package com.mysaving.discountsm.deal;
 
-import com.neovisionaries.i18n.CurrencyCode;
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.UUID;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -29,21 +26,19 @@ public class DealEntity {
 
   private BigDecimal newPriceAmount;
 
-  @Enumerated(EnumType.STRING)
-  private CurrencyCode newPriceCurrency;
+  private String newPriceCurrency;
 
   private BigDecimal oldPriceAmount;
 
-  @Enumerated(EnumType.STRING)
-  private CurrencyCode oldPriceCurrency;
+  private String oldPriceCurrency;
 
   private int upVotes;
 
   private int downVotes;
 
-  private ZonedDateTime posted;
+  private Instant posted;
 
-  private ZonedDateTime expiry;
+  private Instant expiry;
 
   private String dealLink;
 

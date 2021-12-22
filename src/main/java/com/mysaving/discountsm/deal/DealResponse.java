@@ -1,7 +1,7 @@
 package com.mysaving.discountsm.deal;
 
 import com.mysaving.discountsm.support.Money;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 public record DealResponse(
@@ -12,8 +12,8 @@ public record DealResponse(
     Money oldPriceMoney,
     int upVotes,
     int downVotes,
-    ZonedDateTime created,
-    ZonedDateTime expiry,
+    Instant posted,
+    Instant expiry,
     String dealLink,
     String imageLink) {
 }

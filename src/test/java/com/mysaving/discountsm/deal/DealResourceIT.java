@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +19,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -36,6 +38,33 @@ class DealResourceIT {
 
   @Test
   public void itCanCreateDeal() {
+    UUID dealUid = givenADeal();
+    assertThat(dealUid).isNotNull();
+    then(dealRepository.findById(dealUid)).isPresent();
+  }
+
+  @Test
+  public void itCanGetAllDeals() {
+    UUID dealUid1 = givenADeal();
+    UUID dealUid2 = givenADeal();
+    assertThat(dealUid1).isNotNull();
+    assertThat(dealUid2).isNotNull();
+
+    URI uri = UriComponentsBuilder.newInstance()
+        .scheme("http")
+        .host("localhost")
+        .port(port)
+        .path("api/v1/deal")
+        .build()
+        .toUri();
+
+    ResponseEntity<DealResponse[]> response = testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), DealResponse[].class);
+    List<DealResponse> deals = Arrays.asList(response.getBody());
+
+    then(deals).extracting(DealResponse::id).contains(dealUid1, dealUid2);
+  }
+
+  private UUID givenADeal() {
     URI uri = UriComponentsBuilder.newInstance()
         .scheme("http")
         .host("localhost")
@@ -51,11 +80,6 @@ class DealResourceIT {
     );
 
     ResponseEntity<UUID> response = testRestTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(dealRequest), UUID.class);
-
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    UUID transactionUid = response.getBody();
-    assertThat(transactionUid).isNotNull();
-
-    then(dealRepository.findById(transactionUid)).isPresent();
+    return response.getBody();
   }
 }
