@@ -8,8 +8,8 @@ CREATE TABLE deal (
      old_price_currency VARCHAR(3) NOT NULL,
      up_votes INTEGER NOT NULL,
      down_votes INTEGER NOT NULL,
-     posted TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-     expiry TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+     posted TIMESTAMP WITH TIME ZONE NOT NULL,
+     expiry TIMESTAMP WITH TIME ZONE NOT NULL,
      deal_link TEXT NOT NULL,
      image_link TEXT NOT NULL
      );
