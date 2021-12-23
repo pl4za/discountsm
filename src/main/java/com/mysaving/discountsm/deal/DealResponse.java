@@ -10,10 +10,8 @@ public record DealResponse(
     String description,
     Money newPriceMoney,
     Money oldPriceMoney,
-    int upVotes,
-    int downVotes,
+    int score,
     Instant posted,
-    Instant expiry,
     String dealLink,
     String imageLink) {
 }

@@ -32,13 +32,9 @@ public class DealEntity {
 
   private String oldPriceCurrency;
 
-  private int upVotes;
-
-  private int downVotes;
+  private int score;
 
   private Instant posted;
-
-  private Instant expiry;
 
   private String dealLink;
 

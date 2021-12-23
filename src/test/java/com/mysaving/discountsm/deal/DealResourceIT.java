@@ -8,8 +8,6 @@ import com.mysaving.discountsm.repository.DealRepository;
 import com.mysaving.discountsm.support.Money;
 import java.math.BigDecimal;
 import java.net.URI;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -56,38 +54,38 @@ class DealResourceIT {
   }
 
   @Test
-  void itCanVoteOnDeals() {
+  void itCanLikeDeal() {
     UUID dealUid1 = givenADeal();
     UUID dealUid2 = givenADeal();
     assertThat(dealUid1).isNotNull();
     assertThat(dealUid2).isNotNull();
 
     List<DealResponse> deals = getAllDeals();
-    then(deals).extracting(DealResponse::id, DealResponse::upVotes, DealResponse::downVotes)
+    then(deals).extracting(DealResponse::id, DealResponse::score)
         .contains(
-            new Tuple(dealUid1, 0, 0),
-            new Tuple(dealUid2, 0, 0)
+            new Tuple(dealUid1, 0),
+            new Tuple(dealUid2, 0)
         );
 
-    int score1 = voteOnDeal(dealUid1, "up-vote");
-    int score2 = voteOnDeal(dealUid2, "down-vote");
+    int score1 = likeDeal(dealUid1);
+    int score2 = likeDeal(dealUid2);
     assertThat(score1).isEqualTo(1);
-    assertThat(score2).isEqualTo(-1);
+    assertThat(score2).isEqualTo(1);
 
     deals = getAllDeals();
-    then(deals).extracting(DealResponse::id, DealResponse::upVotes, DealResponse::downVotes)
+    then(deals).extracting(DealResponse::id, DealResponse::score)
         .contains(
-            new Tuple(dealUid1, 1, 0),
-            new Tuple(dealUid2, 0, 1)
+            new Tuple(dealUid1, 1),
+            new Tuple(dealUid2, 1)
         );
   }
 
-  private int voteOnDeal(UUID dealUid1, String path) {
+  private int likeDeal(UUID dealUid1) {
     URI uri = UriComponentsBuilder.newInstance()
         .scheme("http")
         .host("localhost")
         .port(port)
-        .path("api/v1/deal/{dealUid}/" + path)
+        .path("api/v1/deal/{dealUid}/like")
         .buildAndExpand(dealUid1)
         .toUri();
 
@@ -119,8 +117,7 @@ class DealResourceIT {
 
     DealRequest dealRequest = new DealRequest(
         "title", "desc", Money.of(GBP, BigDecimal.ONE),
-        Money.of(GBP, BigDecimal.TEN), Instant.now().plus(1, ChronoUnit.DAYS),
-        "https://tinyurl.com/2p838csd",
+        Money.of(GBP, BigDecimal.TEN), "https://tinyurl.com/2p838csd",
         "https://images.hotukdeals.com/threads/raw/default/3857523_1/re/1024x1024/qt/60/3857523_1.jpg"
     );
 

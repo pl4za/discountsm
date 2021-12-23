@@ -21,10 +21,8 @@ public interface DealRepository extends JpaRepository<DealEntity, UUID> {
         new_price_currency,
         old_price_amount,
         old_price_currency,
-        up_votes,
-        down_votes,
+        score,
         posted,
-        expiry,
         deal_link,
         image_link
       )
@@ -36,10 +34,8 @@ public interface DealRepository extends JpaRepository<DealEntity, UUID> {
         :newPriceCurrency,
         :oldPriceAmount,
         :oldPriceCurrency,
-        :upVotes,
-        :downVotes,
+        :score,
         :posted,
-        :expiry,
         :dealLink,
         :imageLink
       )
@@ -52,23 +48,15 @@ public interface DealRepository extends JpaRepository<DealEntity, UUID> {
       @Param("newPriceCurrency") String newPriceCurrency,
       @Param("oldPriceAmount") BigDecimal oldPriceAmount,
       @Param("oldPriceCurrency") String oldPriceCurrency,
-      @Param("upVotes") int upVotes,
-      @Param("downVotes") int downVotes,
+      @Param("score") int upVotes,
       @Param("posted") Instant posted,
-      @Param("expiry") Instant expiry,
       @Param("dealLink") String dealLink,
       @Param("imageLink") String imageLink
   );
 
   @Query(value = """
-      UPDATE deal SET up_votes = up_votes + 1 WHERE id = :id
-      RETURNING up_votes - down_votes
+      UPDATE deal SET score = score + 1 WHERE id = :id
+      RETURNING score
       """, nativeQuery = true)
-  int upVoteDeal(@Param("id") UUID id);
-
-  @Query(value = """
-      UPDATE deal SET down_votes = down_votes + 1 WHERE id = :id
-      RETURNING up_votes - down_votes
-      """, nativeQuery = true)
-  int downVoteDeal(@Param("id") UUID id);
+  int likeDeal(@Param("id") UUID id);
 }

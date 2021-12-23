@@ -27,14 +27,8 @@ The below docker command will spin up the service (8080) and the database (5432)
 docker build --tag discountsm .
 docker-compose up
 ```
-The postgres docker container is mapped to port 5432, so you can stop the service in docker and run it manually using:
-
-```mvn spring-boot:run```
-
-## Other
-
-### Fix migrations after changes:
-
+The postgres docker container is mapped to port 5432, so you can stop the service in docker, clear the migrations and run it manually using:
 ```
-mvn -Dflyway.user=postgres -Dflyway.url=jdbc:postgresql://localhost/discountsm flyway:clean
+mvn -Dflyway.user=postgres -Dflyway.password=discountsm -Dflyway.url=jdbc:postgresql://localhost/discountsm flyway:clean
+mvn spring-boot:run (or directly in your IDE)
 ```

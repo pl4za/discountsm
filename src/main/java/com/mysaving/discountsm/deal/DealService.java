@@ -25,10 +25,8 @@ public class DealService implements DealResource {
             deal.getDescription(),
             Money.of(CurrencyCode.valueOf(deal.getNewPriceCurrency()), deal.getNewPriceAmount()),
             Money.of(CurrencyCode.valueOf(deal.getOldPriceCurrency()), deal.getOldPriceAmount()),
-            deal.getUpVotes(),
-            deal.getDownVotes(),
+            deal.getScore(),
             deal.getPosted(),
-            deal.getExpiry(),
             deal.getDealLink(),
             deal.getImageLink()
         )).toList();
@@ -47,9 +45,7 @@ public class DealService implements DealResource {
         dealRequest.oldPriceMoney().amount(),
         dealRequest.oldPriceMoney().currencyCode().toString(),
         0,
-        0,
         Instant.now(),
-        dealRequest.expiry(),
         dealRequest.dealLink(),
         dealRequest.imageLink()
     );
@@ -59,13 +55,7 @@ public class DealService implements DealResource {
 
   @Override
   @Transactional
-  public int upvoteDeal(UUID dealUid) {
-    return dealRepository.upVoteDeal(dealUid);
-  }
-
-  @Override
-  @Transactional
-  public int downVoteDeal(UUID dealUid) {
-    return dealRepository.downVoteDeal(dealUid);
+  public int likeDeal(UUID dealUid) {
+    return dealRepository.likeDeal(dealUid);
   }
 }
