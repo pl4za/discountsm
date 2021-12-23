@@ -69,8 +69,10 @@ class DealResourceIT {
             new Tuple(dealUid2, 0, 0)
         );
 
-    voteOnDeal(dealUid1, "up-vote");
-    voteOnDeal(dealUid2, "down-vote");
+    int score1 = voteOnDeal(dealUid1, "up-vote");
+    int score2 = voteOnDeal(dealUid2, "down-vote");
+    assertThat(score1).isEqualTo(1);
+    assertThat(score2).isEqualTo(-1);
 
     deals = getAllDeals();
     then(deals).extracting(DealResponse::id, DealResponse::upVotes, DealResponse::downVotes)
@@ -80,7 +82,7 @@ class DealResourceIT {
         );
   }
 
-  private void voteOnDeal(UUID dealUid1, String path) {
+  private int voteOnDeal(UUID dealUid1, String path) {
     URI uri = UriComponentsBuilder.newInstance()
         .scheme("http")
         .host("localhost")
@@ -89,7 +91,8 @@ class DealResourceIT {
         .buildAndExpand(dealUid1)
         .toUri();
 
-    testRestTemplate.exchange(uri, HttpMethod.PUT, new HttpEntity<>(new HttpHeaders()), String.class);
+    ResponseEntity<Integer> response = testRestTemplate.exchange(uri, HttpMethod.PUT, new HttpEntity<>(new HttpHeaders()), Integer.class);
+    return response.getBody();
   }
 
   private List<DealResponse> getAllDeals() {

@@ -60,15 +60,15 @@ public interface DealRepository extends JpaRepository<DealEntity, UUID> {
       @Param("imageLink") String imageLink
   );
 
-  @Modifying
   @Query(value = """
       UPDATE deal SET up_votes = up_votes + 1 WHERE id = :id
+      RETURNING up_votes - down_votes
       """, nativeQuery = true)
-  void upVoteDeal(@Param("id") UUID id);
+  int upVoteDeal(@Param("id") UUID id);
 
-  @Modifying
   @Query(value = """
       UPDATE deal SET down_votes = down_votes + 1 WHERE id = :id
+      RETURNING up_votes - down_votes
       """, nativeQuery = true)
-  void downVoteDeal(@Param("id") UUID id);
+  int downVoteDeal(@Param("id") UUID id);
 }

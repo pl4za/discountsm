@@ -59,13 +59,13 @@ public class DealService implements DealResource {
 
   @Override
   @Transactional
-  public void upvoteDeal(UUID dealUid) {
-    dealRepository.upVoteDeal(dealUid);
+  public int upvoteDeal(UUID dealUid) {
+    return dealRepository.upVoteDeal(dealUid);
   }
 
   @Override
   @Transactional
-  public void downVoteDeal(UUID dealUid) {
-    dealRepository.downVoteDeal(dealUid);
+  public int downVoteDeal(UUID dealUid) {
+    return dealRepository.downVoteDeal(dealUid);
   }
 }
