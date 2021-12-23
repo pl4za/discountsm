@@ -117,7 +117,8 @@ class DealResourceIT {
     DealRequest dealRequest = new DealRequest(
         "title", "desc", Money.of(GBP, BigDecimal.ONE),
         Money.of(GBP, BigDecimal.TEN), Instant.now().plus(1, ChronoUnit.DAYS),
-        "dealLink", "imageLink"
+        "https://tinyurl.com/2p838csd",
+        "https://images.hotukdeals.com/threads/raw/default/3857523_1/re/1024x1024/qt/60/3857523_1.jpg"
     );
 
     ResponseEntity<UUID> response = testRestTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(dealRequest), UUID.class);
