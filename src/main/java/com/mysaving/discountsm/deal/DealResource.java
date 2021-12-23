@@ -18,15 +18,9 @@ public interface DealResource {
   @PostMapping
   UUID createDeal(@RequestBody DealRequest dealRequest);
 
-  @PutMapping("{dealUid}/person/{personUid}/up-vote")
-  void upvoteDeal(
-      @PathVariable(value = "dealUid") UUID dealUid,
-      @PathVariable(value = "personUid") UUID personUid
-  );
+  @PutMapping("{dealUid}/up-vote")
+  void upvoteDeal(@PathVariable(value = "dealUid") UUID dealUid);
 
-  @PutMapping("{dealUid}/person/{personUid}/down-vote")
-  void downVoteDeal(
-      @PathVariable(value = "dealUid") UUID dealUid,
-      @PathVariable(value = "personUid") UUID personUid
-  );
+  @PutMapping("{dealUid}/down-vote")
+  void downVoteDeal(@PathVariable(value = "dealUid") UUID dealUid);
 }

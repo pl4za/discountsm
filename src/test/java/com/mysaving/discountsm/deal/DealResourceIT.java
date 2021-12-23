@@ -13,6 +13,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,6 +51,48 @@ class DealResourceIT {
     assertThat(dealUid1).isNotNull();
     assertThat(dealUid2).isNotNull();
 
+    List<DealResponse> deals = getAllDeals();
+    then(deals).extracting(DealResponse::id).contains(dealUid1, dealUid2);
+  }
+
+  @Test
+  void itCanVoteOnDeals() {
+    UUID dealUid1 = givenADeal();
+    UUID dealUid2 = givenADeal();
+    assertThat(dealUid1).isNotNull();
+    assertThat(dealUid2).isNotNull();
+
+    List<DealResponse> deals = getAllDeals();
+    then(deals).extracting(DealResponse::id, DealResponse::upVotes, DealResponse::downVotes)
+        .contains(
+            new Tuple(dealUid1, 0, 0),
+            new Tuple(dealUid2, 0, 0)
+        );
+
+    voteOnDeal(dealUid1, "up-vote");
+    voteOnDeal(dealUid2, "down-vote");
+
+    deals = getAllDeals();
+    then(deals).extracting(DealResponse::id, DealResponse::upVotes, DealResponse::downVotes)
+        .contains(
+            new Tuple(dealUid1, 1, 0),
+            new Tuple(dealUid2, 0, 1)
+        );
+  }
+
+  private void voteOnDeal(UUID dealUid1, String path) {
+    URI uri = UriComponentsBuilder.newInstance()
+        .scheme("http")
+        .host("localhost")
+        .port(port)
+        .path("api/v1/deal/{dealUid}/" + path)
+        .buildAndExpand(dealUid1)
+        .toUri();
+
+    testRestTemplate.exchange(uri, HttpMethod.PUT, new HttpEntity<>(new HttpHeaders()), String.class);
+  }
+
+  private List<DealResponse> getAllDeals() {
     URI uri = UriComponentsBuilder.newInstance()
         .scheme("http")
         .host("localhost")
@@ -59,9 +102,7 @@ class DealResourceIT {
         .toUri();
 
     ResponseEntity<DealResponse[]> response = testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), DealResponse[].class);
-    List<DealResponse> deals = Arrays.asList(response.getBody());
-
-    then(deals).extracting(DealResponse::id).contains(dealUid1, dealUid2);
+    return Arrays.asList(response.getBody());
   }
 
   private UUID givenADeal() {

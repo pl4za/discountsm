@@ -59,4 +59,16 @@ public interface DealRepository extends JpaRepository<DealEntity, UUID> {
       @Param("dealLink") String dealLink,
       @Param("imageLink") String imageLink
   );
+
+  @Modifying
+  @Query(value = """
+      UPDATE deal SET up_votes = up_votes + 1 WHERE id = :id
+      """, nativeQuery = true)
+  void upVoteDeal(@Param("id") UUID id);
+
+  @Modifying
+  @Query(value = """
+      UPDATE deal SET down_votes = down_votes + 1 WHERE id = :id
+      """, nativeQuery = true)
+  void downVoteDeal(@Param("id") UUID id);
 }
