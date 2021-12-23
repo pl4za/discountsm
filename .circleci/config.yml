@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   aws-ecr: circleci/aws-ecr@7.3.0
+  aws-ecs: circleci/aws-ecs@2.0.0
 
 jobs:
   test:
@@ -33,3 +34,9 @@ workflows:
           region: AWS_REGION_ENV_VAR_NAME
           repo: discountsm
           tag: 'latest,discountsm'
+      - aws-ecs/deploy-service-update:
+          cluster-name: 'discountsm-cluster'
+          container-image-name-updates: 'container=discountsm-service,tag=latest'
+          family: 'discountsm-service'
+          requires:
+            - aws-ecr/build-and-push-image
