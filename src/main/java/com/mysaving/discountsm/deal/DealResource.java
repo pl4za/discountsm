@@ -1,7 +1,6 @@
 package com.mysaving.discountsm.deal;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,9 +14,6 @@ public interface DealResource {
 
   @GetMapping
   List<DealResponse> getAllDeals();
-
-  @GetMapping("{dealUid}")
-  Optional<DealResponse> getDeal(@PathVariable(value = "dealUid") UUID dealUid);
 
   @PostMapping
   UUID createDeal(@RequestBody DealRequest dealRequest);

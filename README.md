@@ -1,16 +1,15 @@
-# discountsm
+# discountsm (beta)
 
 _Deals, discounts and vouchers_
 
 [![CircleCI](https://circleci.com/gh/pl4za/discountsm.svg?style=shield&circle-token=84d6308b028d53b580577374a553049c3b831af3)](https://app.circleci.com/pipelines/github/pl4za/discountsm)
 
-## Features
+## Features (V0.1)
 
-- Share deals
+- See deals
+- Create deals
 - Vote on deals
-- Login / Register
-- Save deals
-- Comment on deals
+- Share deals
 
 ## Tech
 
@@ -18,7 +17,7 @@ _Deals, discounts and vouchers_
 - Hibernate
 - Postgres
 - Flyway
-- Joda Time/Money
+- Docker
 
 ## Running the service
 

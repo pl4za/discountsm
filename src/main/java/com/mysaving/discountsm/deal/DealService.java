@@ -5,7 +5,6 @@ import com.mysaving.discountsm.support.Money;
 import com.neovisionaries.i18n.CurrencyCode;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,11 +32,6 @@ public class DealService implements DealResource {
             deal.getDealLink(),
             deal.getImageLink()
         )).toList();
-  }
-
-  @Override
-  public Optional<DealResponse> getDeal(UUID dealUid) {
-    return Optional.empty();
   }
 
   @Override
