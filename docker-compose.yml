@@ -9,13 +9,17 @@ services:
     depends_on:
       - db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/circle_test
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/discountsm
       - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_DATASOURCE_PASSWORD=discountsm
+    ports:
+      - "8080:8080"
   db:
     image: 'postgres:14.1-alpine'
     container_name: postgres
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=docker_compose
+      - POSTGRES_PASSWORD=discountsm
       - POSTGRES_DB=discountsm
+    ports:
+      - "5432:5432"

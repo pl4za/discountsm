@@ -13,7 +13,7 @@ jobs:
       - image: cimg/postgres:14.0
         environment:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: circle_ci
+          POSTGRES_PASSWORD: discountsm
           POSTGRES_DB: discountsm
     steps:
       - checkout

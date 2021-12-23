@@ -23,22 +23,13 @@ _Deals, discounts and vouchers_
 ## Running the service
 
 This service and its integration tests require a postgres database running on port 5432.
-
-### Auto (Docker)
-
+The below docker command will spin up the service (8080) and the database (5432).
 ```
 docker build --tag discountsm .
 docker-compose up
 ```
+The postgres docker container is mapped to port 5432, so you can stop the service in docker and run it manually using:
 
-### Manual
-
-```
-docker pull postgres:14.1-alpine 
-docker run --name postgres -p 5432:5432 -e POSTGRES_HOST_AUTH_METHOD=trust POSTGRES_DB=circle_test -d postgres:14.1-alpine 
-```
-
-And simply run it locally with:
 ```mvn spring-boot:run```
 
 ## Other
@@ -46,5 +37,5 @@ And simply run it locally with:
 ### Fix migrations after changes:
 
 ```
-mvn -Dflyway.user=postgres -Dflyway.url=jdbc:postgresql://localhost/circle_test flyway:clean
+mvn -Dflyway.user=postgres -Dflyway.url=jdbc:postgresql://localhost/discountsm flyway:clean
 ```
